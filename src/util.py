@@ -106,7 +106,7 @@ def load_parameters(folder, device):
     return n_of_imgs, im_size, (camera_pos, light_pos, light_pow)
 
 
-def load_textures(folder, device):
+def load_textures(folder, resolution, device):
 
     f = open(os.path.join(folder, 'par.json'))
     data = json.load(f)
@@ -127,12 +127,81 @@ def load_textures(folder, device):
     assert(normal.shape[0] == normal.shape[1])
     res = normal.shape[0]
 
+    if resolution > 0:
+        dim = (resolution, resolution)
+        normal = cv2.resize(normal, dim, interpolation=cv2.INTER_LANCZOS4)
+        diffuse = cv2.resize(diffuse, dim, interpolation=cv2.INTER_LANCZOS4)
+        specular = cv2.resize(specular, dim, interpolation=cv2.INTER_LANCZOS4)
+        roughness = cv2.resize(roughness, dim, interpolation=cv2.INTER_LANCZOS4)
+
     normal = th.from_numpy(normal).permute(2, 0, 1).unsqueeze(0).to(device)
     diffuse = th.from_numpy(diffuse).permute(2, 0, 1).unsqueeze(0).to(device)
     specular = th.from_numpy(specular).permute(2, 0, 1).unsqueeze(0).to(device)
     roughness = th.from_numpy(roughness).permute(2, 0, 1).unsqueeze(0).to(device)
 
-    return res, (normal, diffuse, specular, roughness)
+    return res, [normal[:, :2, :, :], diffuse, specular, roughness.mean(1, keepdim=True)]
+
+
+def save_textures(textures, folder):
+
+    f = open(os.path.join(folder, 'par.json'))
+    data = json.load(f)
+    f.close()
+
+    tex_folder = data["texture_folder"]
+    optim_tex_folder = os.path.join(folder, tex_folder, 'optim')
+
+    normal, diffuse, specular, roughness = textures
+    
+    normal_x  = normal[:,0,:,:].clamp(-1, 1)
+    normal_y  = normal[:,1,:,:].clamp(-1, 1)
+    normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1)
+    normal_z  = (1 - normal_xy).sqrt()
+    normal    = th.stack((normal_x, normal_y, normal_z), 1)
+    normal /= normal.norm(2.0, 1, keepdim=True)
+
+    roughness = roughness.expand(-1, 3, -1, -1)
+
+    normal = normal.squeeze().permute(1, 2, 0).detach().cpu().numpy()
+    diffuse = diffuse.squeeze().permute(1, 2, 0).detach().cpu().numpy()
+    specular = specular.squeeze().permute(1, 2, 0).detach().cpu().numpy()
+    roughness = roughness.squeeze().permute(1, 2, 0).detach().cpu().numpy()
+
+    imwrite(normal, os.path.join(optim_tex_folder, 'nom.png'), 'NORMAL')
+    imwrite(diffuse, os.path.join(optim_tex_folder, 'dif.png'), 'sRGB')
+    imwrite(specular, os.path.join(optim_tex_folder, 'spe.png'), 'sRGB')
+    imwrite(roughness, os.path.join(optim_tex_folder, 'rgh.png'), 'sRGB')
+
+
+def load_targets(folder, resolution, device):
+
+    f = open(os.path.join(folder, 'par.json'))
+    data = json.load(f)
+    f.close()
+
+    index = data["id"]
+    target_folder = data["target_folder"]
+
+    fn_target = os.path.join(folder, target_folder, '00.png')
+    target0 = imread(fn_target, 'sRGB')
+
+    assert(target0.shape[0] == target0.shape[1])
+    res = target0.shape[0]
+
+    n_of_imgs = len(index)
+
+    if resolution < 0:
+        resolution = res
+
+    targets = th.zeros((n_of_imgs, 3, resolution, resolution), dtype=th.float32, device=device)
+    for i, idx in enumerate(index):
+        fn_target = os.path.join(folder, target_folder, '%02d.png' % idx)
+        target = imread(fn_target, 'sRGB')
+        if resolution > 0:
+            target = cv2.resize(target, (resolution, resolution), interpolation=cv2.INTER_LANCZOS4)
+        targets[i, :, :, :] = th.from_numpy(target).permute(2, 0, 1)
+
+    return res, targets.to(device)
 
 
 def image9to1(folder):

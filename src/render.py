@@ -19,7 +19,7 @@ def render(root_dir):
     # device = th.device('cpu')
 
     n, size, cl = load_parameters(root_dir, device)
-    res, textures = load_textures(root_dir, device)
+    res, textures = load_textures(root_dir, -1, device)
 
     render_obj = Microfacet(res, n, size, cl, device)
     rendereds = render_obj.eval(textures)

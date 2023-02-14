@@ -58,14 +58,22 @@ class Microfacet:
         vec = pos - self.pos
         return self.normalize(vec), self.dot(vec, vec)
 
+    def reconstruct_normal(self, texture):
+        normal_x  = texture[:,0,:,:].clamp(-1 ,1)
+        normal_y  = texture[:,1,:,:].clamp(-1 ,1)
+        normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1)
+        normal_z  = (1 - normal_xy).sqrt()
+        normal    = th.stack((normal_x, normal_y, normal_z), 1)
+        return self.normalize(normal)
+
     def eval(self, textures):
 
         # Reformats tensor to [N, 3, res, res]
-        normal, diffuse, specular, roughness = textures
-        normal = normal.expand(self.n_of_imgs, -1, -1, -1)
-        diffuse = diffuse.expand(self.n_of_imgs, -1, -1, -1)
-        specular = specular.expand(self.n_of_imgs, -1, -1, -1)
-        roughness = roughness.expand(self.n_of_imgs, -1, -1, -1)
+        normal_tmp, diffuse, specular, roughness = textures
+        normal = self.reconstruct_normal(normal_tmp).expand(self.n_of_imgs, -1, -1, -1)
+        diffuse = diffuse.clamp(0, 1).expand(self.n_of_imgs, -1, -1, -1)
+        specular = specular.clamp(0, 1).expand(self.n_of_imgs, -1, -1, -1)
+        roughness = roughness.clamp(0, 1).expand(self.n_of_imgs, 3, -1, -1)
 
         # Computes viewing direction, light direction, half angle
         v, _ = self.get_dir(self.camera_pos)

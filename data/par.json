@@ -1,6 +1,7 @@
 {   
     "_comment": "in cm uint",
     "texture_folder": "tex",
+    "target_folder": "img",
     "image_size": 6.8480,
     "id": [0, 1, 2, 3, 4, 5, 6, 7, 8],
     "camera_pos": [[ 1.0125, 0.2928, 16.7058],
