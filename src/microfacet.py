@@ -22,20 +22,22 @@ class Microfacet:
         self.light_pos = cl[1].unsqueeze(2).unsqueeze(3).expand(-1, -1, res, res)
         self.light_pow = cl[2].unsqueeze(0).unsqueeze(2).unsqueeze(3).expand(n, -1, res, res)
 
+        print("[DONE:Microfacet] Initial object")
+
     def GGX(self, cos_h, alpha):
         c2 = cos_h ** 2
         a2 = alpha ** 2
         den = c2 * a2 + (1 - c2)
         return a2 / (np.pi * den**2 + self.eps)
 
-    # def Beckmann(self, cos_h, alpha):
-    #     c2 = cos_h ** 2
-    #     t2 = (1 - c2) / c2
-    #     a2 = alpha ** 2
-    #     return th.exp(-t2 / a2) / (np.pi * a2 * c2 ** 2)
+    def Beckmann(self, cos_h, alpha):
+        c2 = cos_h ** 2
+        t2 = (1 - c2) / c2
+        a2 = alpha ** 2
+        return th.exp(-t2 / a2) / (np.pi * a2 * c2 ** 2)
 
-    # def Fresnel(self, cos, f0):
-    #     return f0 + (1 - f0) * (1 - cos)**5
+    def Fresnel_f0(self, cos, f0):
+        return f0 + (1 - f0) * (1 - cos)**5
 
     def Fresnel(self, cos, specular):
         sphg = th.pow(2.0, ((-5.55473 * cos) - 6.98316) * cos);
@@ -103,4 +105,5 @@ class Microfacet:
         # rendering
         img = self.light_pow * f * n_dot_l / dist_l_sq
 
+        print("[DONE:Microfacet] rendering")
         return img.clamp(0, 1)

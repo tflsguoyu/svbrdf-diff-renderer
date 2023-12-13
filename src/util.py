@@ -3,174 +3,120 @@
 # Copyright (c) 2023, Yu Guo. All rights reserved.
 
 import json
-import os
-
-os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"  # To write arrays in .EXR file
-
-import cv2
 import numpy as np
 import torch as th
+from pathlib import Path
+from src.imageio import imread, imwrite
 
 
-def imread(filename, type=None):
-    '''Loads different types of image from file.
+class SvbrdfIO:
+    def __init__(self, folder, device):
+        self.folder = folder
+        self.device = device
 
-    :param filename: A string of image file name.
-    :param type: The type of the image. See all the cases below.
+        json_dir = folder / "parameters.json"
+        if not json_dir.exists():
+            print(f"[ERROR:SvbrdfIO:init] {json_dir} is not exists")
+            exit()
 
-    :return: A numpy array of an image. 
-    '''
-    match type:
-        case 'EXR':
-            im = cv2.imread(filename, flags=cv2.IMREAD_ANYDEPTH | cv2.IMREAD_UNCHANGED)
-            im = im[..., : : -1]
+        f = open(json_dir)
+        data = json.load(f)
+        f.close()
 
-        case 'sRGB':
-            im = cv2.imread(filename)
-            im = im[..., : : -1]
-            im = im.astype('float32') / 255            
-            im = im ** 2.2
+        self.textures_dir = data["textures_dir"]
+        self.images_dir = data["images_dir"]
+        self.im_size = data["image_size"]
+        self.index = data["id"]
+        self.camera_pos = data["camera_pos"]
+        self.light_pos = data["light_pos"]
+        self.light_pow = data["light_pow"]
 
-        case 'lRGB':
-            im = cv2.imread(filename)
-            im = im[..., : : -1]
-            im = im.astype('float32') / 255            
+        self.n_of_imgs = len(self.index)
 
-        case 'NORMAL':
-            im = cv2.imread(filename)
-            im = im[..., : : -1]
-            im = im.astype('float32') / 255
-            im = im * 2 - 1
-            height, width, c = im.shape
-            total = height * width
-            im = im.reshape((total, c))
-            im_norm = np.linalg.norm(im, axis=1)
-            im /= np.broadcast_to(im_norm, (c, total)).T
-            im = im.reshape((height, width, c))
-
-        case _:
-            im = cv2.imread(filename)
-
-    return im
+        print("[DONE:SvbrdfIO] Initial object")
 
 
-def imwrite(im, filename, type=None):
-    '''Saves different types of image to file.
-
-    :param im: A numpy array of an image.
-    :param filename: A string of image file name.
-    :param type: The type of the image. See all the cases below.
-    '''
-    match type:
-        case 'EXR':
-            im = im[..., : : -1]
-            cv2.imwrite(filename, im)
-
-        case 'sRGB':
-            gamma = 2.2
-            im = im.clip(0, 1) ** (1 / gamma)
-            im = (im * 255).astype('uint8')
-            im = im[..., : : -1]
-            cv2.imwrite(filename, im)
-
-        case 'NORMAL':
-            im = (im.clip(-1, 1) + 1) / 2
-            im = (im * 255).astype('uint8')
-            im = im[..., : : -1]
-            cv2.imwrite(filename, im)
-
-        case _:
-            cv2.imwrite(filename, im)
+    def np_to_th(self, arr):
+        return th.from_numpy(arr).to(self.device)
 
 
-def load_parameters(folder, device):
-
-    f = open(os.path.join(folder, 'par.json'))
-    data = json.load(f)
-    f.close()
-
-    im_size = data["image_size"]
-    index = data["id"]
-    camera_pos = np.array(data["camera_pos"], 'float32')
-    light_pos = np.array(data["light_pos"], 'float32')
-    light_pow = np.array(data["light_pow"], 'float32')
-
-    n_of_imgs = len(index)
-    camera_pos = camera_pos[index, :]
-    light_pos = light_pos[index, :]
-
-    camera_pos = th.from_numpy(camera_pos).to(device)
-    light_pos = th.from_numpy(light_pos).to(device)
-    light_pow = th.from_numpy(light_pow).to(device)
-
-    return n_of_imgs, im_size, (camera_pos, light_pos, light_pow)
+    def th_to_np(self, arr):
+        return arr.detach().cpu().numpy()
 
 
-def load_textures(folder, resolution, device):
-
-    f = open(os.path.join(folder, 'par.json'))
-    data = json.load(f)
-    f.close()
-
-    tex_folder = data["texture_folder"]
-
-    fn_normal = os.path.join(folder, tex_folder, 'nom.png')
-    fn_diffuse = os.path.join(folder, tex_folder, 'dif.png')
-    fn_specular = os.path.join(folder, tex_folder, 'spe.png')
-    fn_roughness = os.path.join(folder, tex_folder, 'rgh.png')
-
-    normal = imread(fn_normal, 'NORMAL')
-    diffuse = imread(fn_diffuse, 'sRGB')
-    specular = imread(fn_specular, 'sRGB')
-    roughness = imread(fn_roughness, 'sRGB')
-
-    assert(normal.shape[0] == normal.shape[1])
-    res = normal.shape[0]
-
-    if resolution > 0:
-        dim = (resolution, resolution)
-        normal = cv2.resize(normal, dim, interpolation=cv2.INTER_LANCZOS4)
-        diffuse = cv2.resize(diffuse, dim, interpolation=cv2.INTER_LANCZOS4)
-        specular = cv2.resize(specular, dim, interpolation=cv2.INTER_LANCZOS4)
-        roughness = cv2.resize(roughness, dim, interpolation=cv2.INTER_LANCZOS4)
-
-    normal = th.from_numpy(normal).permute(2, 0, 1).unsqueeze(0).to(device)
-    diffuse = th.from_numpy(diffuse).permute(2, 0, 1).unsqueeze(0).to(device)
-    specular = th.from_numpy(specular).permute(2, 0, 1).unsqueeze(0).to(device)
-    roughness = th.from_numpy(roughness).permute(2, 0, 1).unsqueeze(0).to(device)
-
-    return res, [normal[:, :2, :, :], diffuse, specular, roughness.mean(1, keepdim=True)]
+    def reconstruct_normal(self, texture):
+        normal_x  = texture[:,0,:,:].clamp(-1 ,1)
+        normal_y  = texture[:,1,:,:].clamp(-1 ,1)
+        normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1)
+        normal_z  = (1 - normal_xy).sqrt()
+        normal    = th.stack((normal_x, normal_y, normal_z), 1)
+        return normal / (normal.norm(2.0, 1, keepdim=True))
 
 
-def save_textures(textures, folder):
+    def load_parameters_th(self):
+        camera_pos = np.array(self.camera_pos, 'float32')
+        light_pos = np.array(self.light_pos, 'float32')
+        light_pow = np.array(self.light_pow, 'float32')
 
-    f = open(os.path.join(folder, 'par.json'))
-    data = json.load(f)
-    f.close()
+        camera_pos = camera_pos[self.index, :]
+        light_pos = light_pos[self.index, :]
 
-    tex_folder = data["texture_folder"]
-    optim_tex_folder = os.path.join(folder, tex_folder, 'optim')
+        camera_pos_th = self.np_to_th(camera_pos)
+        light_pos_th = self.np_to_th(light_pos)
+        light_pow_th = self.np_to_th(light_pow)
 
-    normal, diffuse, specular, roughness = textures
-    
-    normal_x  = normal[:,0,:,:].clamp(-1, 1)
-    normal_y  = normal[:,1,:,:].clamp(-1, 1)
-    normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1)
-    normal_z  = (1 - normal_xy).sqrt()
-    normal    = th.stack((normal_x, normal_y, normal_z), 1)
-    normal /= normal.norm(2.0, 1, keepdim=True)
+        print("[DONE:SvbrdfIO] load parameters")
+        return camera_pos_th, light_pos_th, light_pow_th
 
-    roughness = roughness.expand(-1, 3, -1, -1)
 
-    normal = normal.squeeze().permute(1, 2, 0).detach().cpu().numpy()
-    diffuse = diffuse.squeeze().permute(1, 2, 0).detach().cpu().numpy()
-    specular = specular.squeeze().permute(1, 2, 0).detach().cpu().numpy()
-    roughness = roughness.squeeze().permute(1, 2, 0).detach().cpu().numpy()
+    def load_textures_th(self, opt_ref, res):
+        # opt_ref is either str("optimized") or str("reference")
+        textures_dir = self.folder / self.textures_dir / f"{opt_ref}/{res}"
+        if not textures_dir.exists:
+            print(f"[ERROR:SvbrdfIO:load_textures_th] {textures_dir} is not exists")
+            exit()
 
-    imwrite(normal, os.path.join(optim_tex_folder, 'nom.png'), 'NORMAL')
-    imwrite(diffuse, os.path.join(optim_tex_folder, 'dif.png'), 'sRGB')
-    imwrite(specular, os.path.join(optim_tex_folder, 'spe.png'), 'sRGB')
-    imwrite(roughness, os.path.join(optim_tex_folder, 'rgh.png'), 'sRGB')
+        normal = imread(textures_dir / "nom.png", 'normal')
+        diffuse = imread(textures_dir / "dif.png", 'srgb')
+        specular = imread(textures_dir / "spe.png", 'srgb')
+        roughness = imread(textures_dir / "rgh.png", 'rough')
+
+        if normal.shape[0] != res or normal.shape[1] != res:
+            print(f"[ERROR:SvbrdfIO:load_textures_th] textures in {textures_dir} have wrong resolution")
+            exit()
+
+        normal_th = self.np_to_th(normal).permute(2, 0, 1).unsqueeze(0)
+        diffuse_th = self.np_to_th(diffuse).permute(2, 0, 1).unsqueeze(0)
+        specular_th = self.np_to_th(specular).permute(2, 0, 1).unsqueeze(0)
+        roughness_th = self.np_to_th(roughness).unsqueeze(0).unsqueeze(0)
+
+        print("[DONE:SvbrdfIO] load textures")
+        return normal_th[:, :2, :, :], diffuse_th, specular_th, roughness_th
+
+
+    def save_textures_th(self, textures_th, opt_ref, res):
+        # opt_ref is either str("optimized") or str("reference")
+        textures_dir = self.folder / self.textures_dir / f"{opt_ref}/{res}"
+        textures_dir.mkdir(parents=True, exists_ok=True)
+
+        normal_th, diffuse_th, specular_th, roughness_th = textures_th
+        normal_th = self.reconstruct_normal(normal_th)
+
+        normal = self.th_to_np(normal_th.squeeze().permute(1, 2, 0))
+        diffuse = self.th_to_np(diffuse_th.squeeze().permute(1, 2, 0))
+        specular = self.th_to_np(specular_th.squeeze().permute(1, 2, 0))
+        roughness = self.th_to_np(roughness_th.squeeze())
+
+        if normal.shape[0] != res or normal.shape[1] != res:
+            print(f"[ERROR:SvbrdfIO:save_textures_th] textures in {textures_dir} have wrong resolution")
+            exit()
+
+        imwrite(normal, textures_dir / 'nom.png', 'normal')
+        imwrite(diffuse, textures_dir / 'dif.png', 'srgb')
+        imwrite(specular, textures_dir / 'spe.png', 'srgb')
+        imwrite(roughness, textures_dir / 'rgh.png', 'rough')
+
+        print("[DONE:SvbrdfIO] save textures")
 
 
 def load_targets(folder, resolution, device):
@@ -204,28 +150,4 @@ def load_targets(folder, resolution, device):
     return res, targets.to(device)
 
 
-def image9to1(folder):
-    for i in range(9):
-        im_this = imread(os.path.join(folder, '%02d.png' % i))
-        if i == 0:
-            h, w = im_this.shape[0], im_this.shape[1]
-            im = np.zeros([h * 3, w * 3, 3], 'float32')
-        r, c = int(i / 3), int(i % 3)
-        im[r * h : (r + 1) * h, c * w : (c + 1) * w, :] = im_this
-    imwrite(im, os.path.join(folder, 'all.png'))
 
-
-def tex4to1(folder):
-    normal = imread(os.path.join(folder, 'nom.png'))
-    diffuse = imread(os.path.join(folder, 'dif.png'))
-    specular = imread(os.path.join(folder, 'spe.png'))
-    roughness = imread(os.path.join(folder, 'rgh.png'))
-
-    h, w = normal.shape[0], normal.shape[1]
-    tex = np.zeros([h * 2, w * 2, 3], 'float32')
-    tex[h * 0 : h * 1, w * 0 : w * 1, :] = normal
-    tex[h * 0 : h * 1, w * 1 : w * 2, :] = diffuse
-    tex[h * 1 : h * 2, w * 0 : w * 1, :] = specular
-    tex[h * 1 : h * 2, w * 1 : w * 2, :] = roughness
-
-    imwrite(tex, os.path.join(folder, 'tex.png'))
