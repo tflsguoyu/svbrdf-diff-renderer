@@ -55,7 +55,10 @@ def imread(filename, flag=None, dim=None):
     return im
 
 
-def imwrite(im, filename, flag=None):
+def imwrite(im, filename, flag=None, dim=None):
+
+    if dim is not None:
+        im = imresize(im, dim)
 
     match flag:
         case "srgb":
@@ -109,5 +112,5 @@ def tex4to1(folder):
     if roughness.ndim == 2:
         roughness = np.dstack((roughness, roughness, roughness))
 
-    texs = imconcat([normal, diffuse, specular, roughness])
+    tex = imconcat([normal, diffuse, specular, roughness])
     imwrite(tex, folder / "tex.png")

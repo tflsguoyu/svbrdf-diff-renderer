@@ -105,5 +105,5 @@ class Microfacet:
         # rendering
         img = self.light_pow * f * n_dot_l / dist_l_sq
 
-        print("[DONE:Microfacet] rendering")
+        # print("[DONE:Microfacet] rendering")
         return img.clamp(0, 1)
