@@ -17,12 +17,9 @@ def render(data_dir, opt_ref, res):
     # device = th.device('cpu')
 
     svbrdf_obj = SvbrdfIO(data_dir, device)
-    n = svbrdf_obj.n_of_imgs
-    size = svbrdf_obj.im_size
-    cl = svbrdf_obj.load_parameters_th()
-    textures = svbrdf_obj.load_textures_th(opt_ref, res)
+    render_obj = Microfacet(res, svbrdf_obj.n_of_imgs, svbrdf_obj.im_size, svbrdf_obj.cl, device)
 
-    render_obj = Microfacet(res, n, size, cl, device)
+    textures = svbrdf_obj.load_textures_th(opt_ref, res)
     rendereds = render_obj.eval(textures)
 
     svbrdf_obj.save_images_th(rendereds, opt_ref, res)

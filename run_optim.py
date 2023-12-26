@@ -4,12 +4,11 @@
 
 import os
 from pathlib import Path
-import tqdm
 import numpy as np
 import torch as th
 
 from src.microfacet import Microfacet
-from src.util import SvbrdfIO
+from src.util import SvbrdfIO, SvbrdfOptim
 
 
 def optim(data_dir, res, epochs):
@@ -18,39 +17,22 @@ def optim(data_dir, res, epochs):
     # device = th.device('cpu')
 
     svbrdf_obj = SvbrdfIO(data_dir, device)
-    n = svbrdf_obj.n_of_imgs
-    size = svbrdf_obj.im_size
-    cl = svbrdf_obj.load_parameters_th()
+    renderer_obj = Microfacet(res, svbrdf_obj.n_of_imgs, svbrdf_obj.im_size, svbrdf_obj.cl, device)
+    optim_obj = SvbrdfOptim(epochs, device)
 
-    # load initial textures
     textures = svbrdf_obj.load_textures_th("reference", res)
-
-    # load target images
     targets = svbrdf_obj.load_images_th("reference", "1024", res)
 
-    # initial rendering
-    render_obj = Microfacet(res, n, size, cl, device)
+    optim_obj.load_parameters_from_tex(textures)
+    optim_obj.load_targets(targets)
+    optim_obj.load_renderer(renderer_obj)
 
-    # Optimization
-    for idx, texture in enumerate(textures):
-        textures[idx] = th.autograd.Variable(texture, requires_grad=True)
+    optim_obj.optim()
+    svbrdf_obj.save_textures_th(optim_obj.textures, "optimized", res)
 
-    optimizer = th.optim.Adam(textures, lr=0.01, betas=(0.9, 0.999))
-    criterion = th.nn.MSELoss().to(device)
+    rendereds = renderer_obj.eval(optim_obj.textures)
+    svbrdf_obj.save_images_th(rendereds, "optimized", res)
 
-    for epoch in tqdm.trange(epochs):
-        # compute renderings
-        rendereds = render_obj.eval(textures)
-
-        # compute loss
-        loss = criterion(rendereds, targets)
-
-        # optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-    svbrdf_obj.save_textures_th(textures, "optimized", res)
 
 
 if __name__ == '__main__':

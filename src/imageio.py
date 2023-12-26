@@ -114,3 +114,4 @@ def tex4to1(folder):
 
     tex = imconcat([normal, diffuse, specular, roughness])
     imwrite(tex, folder / "tex.png")
+

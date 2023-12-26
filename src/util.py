@@ -3,10 +3,53 @@
 # Copyright (c) 2023, Yu Guo. All rights reserved.
 
 import json
+import tqdm
 import numpy as np
 import torch as th
 from pathlib import Path
 from src.imageio import imread, imwrite, img9to1, tex4to1
+
+
+class SvbrdfOptim:
+    def __init__(self, epochs, device):
+        self.epochs = epochs
+        self.criterion = th.nn.MSELoss().to(device)
+
+    def gradient(self, parameters):
+        for idx, parameter in enumerate(parameters):
+            parameters[idx] = th.autograd.Variable(parameter, requires_grad=True)
+        return parameters
+
+    def load_parameters_from_tex(self, textures):
+        self.textures = self.gradient(textures)
+
+    # def load_parameters_from_const(self):
+
+    # def load_parameters_from_rand(self):
+
+    def load_targets(self, images):
+        self.targets = images
+
+    def load_renderer(self, renderer):
+        self.renderer_obj = renderer
+
+    def optim(self):
+        self.optimizer = th.optim.Adam(self.textures, lr=0.01, betas=(0.9, 0.999))
+
+        for epoch in tqdm.trange(self.epochs):
+
+            # compute renderings
+            rendereds = self.renderer_obj.eval(self.textures)
+
+            # compute loss
+            loss = self.criterion(rendereds, self.targets)
+
+            # optimize
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
+
+    # def compute_loss(self):
 
 
 class SvbrdfIO:
@@ -30,8 +73,9 @@ class SvbrdfIO:
         self.camera_pos = data["camera_pos"]
         self.light_pos = data["light_pos"]
         self.light_pow = data["light_pow"]
-
         self.n_of_imgs = len(self.index)
+
+        self.load_calibration_th()
 
         print("[DONE:SvbrdfIO] Initial object")
 
@@ -53,7 +97,7 @@ class SvbrdfIO:
         return normal / (normal.norm(2.0, 1, keepdim=True))
 
 
-    def load_parameters_th(self):
+    def load_calibration_th(self):
         camera_pos = np.array(self.camera_pos, "float32")
         light_pos = np.array(self.light_pos, "float32")
         light_pow = np.array(self.light_pow, "float32")
@@ -65,8 +109,9 @@ class SvbrdfIO:
         light_pos_th = self.np_to_th(light_pos)
         light_pow_th = self.np_to_th(light_pow)
 
+        self.cl = [camera_pos_th, light_pos_th, light_pow_th]
+
         print("[DONE:SvbrdfIO] Load parameters")
-        return [camera_pos_th, light_pos_th, light_pow_th]
 
 
     def load_textures_th(self, opt_ref, res):
