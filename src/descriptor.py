@@ -55,11 +55,16 @@ class VGG19Loss(th.nn.Module):
         self.im_gram = self.gram(self.normalize(im))
 
     def normalize(self, im):
+        # im: N x C x H x W
         transform = Normalize(
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.255]
         )
-        return transform(im)
+        im_norm = im.clone()
+        for i in range(im.shape[0]):
+            im_norm[i,:,:,:] = transform(im[i,:,:,:])
+
+        return im_norm
 
     def forward(self, im):
         return self.criterion(self.gram(self.normalize(im)), self.im_gram)
