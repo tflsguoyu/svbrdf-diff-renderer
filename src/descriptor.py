@@ -1,5 +1,6 @@
-from torchvision.models import vgg19
 import torch as th
+from torchvision.models import vgg19
+from torchvision.transforms import Normalize
 
 
 class VGG19Loss(th.nn.Module):
@@ -51,7 +52,14 @@ class VGG19Loss(th.nn.Module):
         return th.cat(result)
 
     def load(self, im):
-        self.im_gram = self.gram(im)
+        self.im_gram = self.gram(self.normalize(im))
+
+    def normalize(self, im):
+        transform = Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.255]
+        )
+        return transform(im)
 
     def forward(self, im):
-        return self.criterion(self.gram(im), self.im_gram)
+        return self.criterion(self.gram(self.normalize(im)), self.im_gram)
