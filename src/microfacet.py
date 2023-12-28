@@ -6,6 +6,7 @@ import numpy as np
 import torch as th
 
 class Microfacet:
+
     def __init__(self, res, n, size, cl, device):
         # Verified
         self.n_of_imgs = n
@@ -63,8 +64,8 @@ class Microfacet:
     def reconstruct_normal(self, texture):
         normal_x  = texture[:,0,:,:].clamp(-1 ,1)
         normal_y  = texture[:,1,:,:].clamp(-1 ,1)
-        normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1)
-        normal_z  = (1 - normal_xy).sqrt()
+        normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1-self.eps)
+        normal_z  = (1 - normal_xy).sqrt()  # The derivative of x.sqrt() when x=0 is nan
         normal    = th.stack((normal_x, normal_y, normal_z), 1)
         return self.normalize(normal)
 

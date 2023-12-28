@@ -7,52 +7,92 @@ import tqdm
 import numpy as np
 import torch as th
 from pathlib import Path
+from lpips import LPIPS
+from src.descriptor import VGG19Loss
 from src.imageio import imread, imwrite, img9to1, tex4to1
 
 
 class SvbrdfOptim:
-    def __init__(self, epochs, device):
-        self.epochs = epochs
-        self.criterion = th.nn.MSELoss().to(device)
+
+    def __init__(self, device):
+        self.device = device
+        self.loss_l2 = th.nn.MSELoss().to(device)
+        self.eps = 1e-4
+        self.loss_lpips = LPIPS(net='vgg').to(device)
+        for p in self.loss_lpips.parameters():
+            p.requires_grad = False
+        self.loss_vgg19 = VGG19Loss(device)
+        for p in self.loss_vgg19.parameters():
+            p.requires_grad = False
 
     def gradient(self, parameters):
         for idx, parameter in enumerate(parameters):
             parameters[idx] = th.autograd.Variable(parameter, requires_grad=True)
         return parameters
 
-    def load_parameters_from_tex(self, textures):
+    def load_textures_from_tex(self, textures):
         self.textures = self.gradient(textures)
 
-    # def load_parameters_from_const(self):
+    def load_textures_from_const(self, res):
+        normal_th = th.zeros(1, 2, res, res, device=self.device)
+        diffuse_th = th.ones(1, 3, res, res, device=self.device) * 0.5
+        specular_th = th.ones(1, 3, res, res, device=self.device) * 0.04
+        roughness_th = th.ones(1, 1, res, res, device=self.device) * 0.2
 
-    # def load_parameters_from_rand(self):
+        textures = [normal_th, diffuse_th, specular_th, roughness_th]
+        self.textures = self.gradient(textures)
+
+    def load_textures_from_randn(self, res):
+        normal_th = (th.randn(1, 2, res, res, device=self.device) / 4).clamp(-1, 1)
+        diffuse_th = (th.randn(1, 3, res, res, device=self.device) / 8 + 0.5).clamp(0, 1)
+        specular_th = (th.randn(1, 3, res, res, device=self.device) / 32 + 0.04).clamp(0, 1)
+        roughness_th = (th.randn(1, 1, res, res, device=self.device) / 16 + 0.2).clamp(0, 1)
+
+        textures = [normal_th, diffuse_th, specular_th, roughness_th]
+        self.textures = self.gradient(textures)
 
     def load_targets(self, images):
-        self.targets = images
+        self.targets_srgb = self.srgb(images)
+        self.loss_vgg19.load(self.targets_srgb)
 
     def load_renderer(self, renderer):
         self.renderer_obj = renderer
 
-    def optim(self):
-        self.optimizer = th.optim.Adam(self.textures, lr=0.01, betas=(0.9, 0.999))
+    def srgb(self, images):
+        return images.clamp(self.eps, 1) * (1 / 2.2)
 
-        for epoch in tqdm.trange(self.epochs):
+    def compute_image_loss(self, predicts):
+        return self.loss_l2(self.srgb(predicts), self.targets_srgb)
+
+    def compute_lpips_loss(self, predicts):
+        return self.loss_lpips(self.srgb(predicts), self.targets_srgb, normalize=True).mean()
+
+    def compute_vgg19_loss(self, predicts):
+        return self.loss_vgg19(self.srgb(predicts))
+
+    def optim(self, epochs, lr=0.01):
+        self.optimizer = th.optim.Adam(self.textures, lr=lr, betas=(0.9, 0.999))
+
+        pbar = tqdm.trange(epochs)
+        for epoch in pbar:
 
             # compute renderings
             rendereds = self.renderer_obj.eval(self.textures)
 
             # compute loss
-            loss = self.criterion(rendereds, self.targets)
+            # loss = self.compute_image_loss(rendereds)
+            # loss = self.compute_lpips_loss(rendereds)
+            loss = self.compute_vgg19_loss(rendereds)
+            pbar.set_postfix({"Loss": loss.item()})
 
             # optimize
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
 
-    # def compute_loss(self):
-
 
 class SvbrdfIO:
+
     def __init__(self, folder, device):
         self.folder = folder
         self.device = device

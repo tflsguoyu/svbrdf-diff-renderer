@@ -8,7 +8,7 @@ import numpy as np
 import torch as th
 
 from src.microfacet import Microfacet
-from src.util import SvbrdfIO
+from src.svbrdf import SvbrdfIO
 
 
 def render(data_dir, opt_ref, res):

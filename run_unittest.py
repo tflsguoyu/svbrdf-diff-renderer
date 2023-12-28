@@ -3,7 +3,7 @@
 # Copyright (c) 2023, Yu Guo. All rights reserved.
 
 from pathlib import Path
-from src.imageio import imread, img9to1, tex4to1
+from src.imageio import img9to1, tex4to1
 from run_render import render
 from run_optim import optim
 
