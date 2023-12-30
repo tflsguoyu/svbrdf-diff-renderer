@@ -22,10 +22,11 @@ numpy, torch, torchvision, opencv-python, lpips, tqdm, matplotlib, pupil_aprilta
 2. Place it on the material you want to capture.
 3. Turn on camera flashlight and capture images from different views.
 4. Copy captured images to a certain folder (e.g "data/bath_tile") and run `python run_prepare.py`.
+
 Tips:
 1. All markers should be captured.
 2. It's better to capture during night and turn off other lights.
-2. Change camera mode to manual, keep white balance and focal lenth the same during the captures.
+3. Change camera mode to manual, keep white balance and focal lenth the same during the captures.
 
 ### Render
 Run `python run_render.py`
