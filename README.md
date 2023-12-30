@@ -34,3 +34,6 @@ Run `python run_render.py`
 ### Optimization
 Run `python run_optim.py`
 
+## Notes
+- TODO: add GAN part
+- 12/30/2023: Start to use this repo.
