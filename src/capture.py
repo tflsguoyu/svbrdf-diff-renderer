@@ -36,14 +36,22 @@ class Capture:
         point3d_list = self.point3d(size=size, debug=False)
         point2d_list = self.point2d(self.ims, debug=False)
         calibs = self.calibrate(point3d_list, point2d_list)
-        ims = self.rectify(point3d_list, point2d_list, calibs, size=size, d=depth, debug=False)
+        self.ims = self.undistort(self.ims, calibs[0], calibs[1])
+        point2d_list = self.point2d(self.ims, debug=False)
+        calibs = self.calibrate(point3d_list, point2d_list)
+        crops, fulls = self.rectify(point3d_list, point2d_list, calibs, size=size, d=depth, debug=False)
         camera_pos = self.get_camera_pos(calibs[2], calibs[3])
-        self.save(ims, camera_pos, size)
+        self.save(crops, fulls, camera_pos, size)
 
-    def save(self, ims, camera_pos, size):
+    def save(self, ims, tmps, camera_pos, size):
         self.save_to.mkdir(parents=True, exist_ok=True)
         for i in range(self.n_of_imgs):
             imwrite(ims[i], self.save_to / f"{i:02d}.png", dim=(self.final_res, self.final_res))
+
+        tmp_dir = self.save_to / "tmp"
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        for i in range(self.n_of_imgs):
+            imwrite(tmps[i], tmp_dir / f"{i:02d}.png")
 
         data = {
             "_comment": "in cm uint",
@@ -60,6 +68,7 @@ class Capture:
 
     def rectify(self, point3d_list, point2d_list, calibs, size, d=0, debug=False):
         mtx, dist, rvecs, tvecs = calibs
+        ims_full = []
         ims_crop = []
         for i in range(self.n_of_imgs):
             im = self.ims[i]
@@ -82,12 +91,13 @@ class Capture:
 
             homo_mat, _ = cv2.findHomography(src_points, dst_points)
             im_full = cv2.warpPerspective(im, homo_mat, (self.full_res, self.full_res))
+            ims_full.append(im_full)
 
             tmp = int((self.full_res - self.crop_res) / 2)
             im_crop = im_full[tmp:tmp+self.crop_res, tmp:tmp+self.crop_res, :]
             ims_crop.append(im_crop)
 
-        return ims_crop
+        return ims_crop, ims_full
 
     def get_camera_pos(self, rvecs, tvecs):
         camera_pos = []
@@ -98,6 +108,13 @@ class Capture:
             camera_pos.append(np.matmul(rmat_inv, tvec))
 
         return np.hstack(camera_pos).transpose()
+
+    def undistort(self, ims, mtx, dist):
+        ims_undistort = []
+        for i in range(self.n_of_imgs):
+            ims_undistort.append(cv2.undistort(ims[i], mtx, dist))
+
+        return ims_undistort
 
     def calibrate(self, point3d_list, point2d_list):
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
