@@ -102,9 +102,8 @@ class SvbrdfIO:
             print(f"[ERROR:SvbrdfIO:init] {json_dir} is not exists")
             exit()
 
-        f = open(json_dir)
-        data = json.load(f)
-        f.close()
+        with open(json_dir, "r") as f:
+            data = json.load(f)
 
         self.textures_dir = data["textures_dir"]
         self.images_dir = data["images_dir"]

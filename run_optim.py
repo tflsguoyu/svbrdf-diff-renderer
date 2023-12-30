@@ -13,8 +13,8 @@ from src.svbrdf import SvbrdfIO, SvbrdfOptim
 
 def optim(data_dir, res, epochs):
 
-    device = th.device('cuda:0' if th.cuda.is_available() else 'cpu')
-    # device = th.device('cpu')
+    device = th.device("cuda:0" if th.cuda.is_available() else "cpu")
+    # device = th.device("cpu")
 
     svbrdf_obj = SvbrdfIO(data_dir, device)
     renderer_obj = Microfacet(res, svbrdf_obj.n_of_imgs, svbrdf_obj.im_size, svbrdf_obj.cl, device)
@@ -36,6 +36,6 @@ def optim(data_dir, res, epochs):
     svbrdf_obj.save_images_th(rendereds, "optimized", res)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     data_dir = Path("data/card_blue")
     optim(data_dir, 256, 1000)
