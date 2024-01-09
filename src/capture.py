@@ -32,13 +32,14 @@ class Capture:
         self.json_dir = folder / "parameters.json"
         self.save_to = folder / f"images/reference/{self.crop_res}"
 
-    def eval(self, size, depth):
+    def eval(self, size, depth, fisheye=True):
         point3d_list = self.point3d(size=size, debug=False)
         point2d_list = self.point2d(self.ims, debug=False)
         calibs = self.calibrate(point3d_list, point2d_list)
-        self.ims = self.undistort(self.ims, calibs[0], calibs[1])
-        point2d_list = self.point2d(self.ims, debug=False)
-        calibs = self.calibrate(point3d_list, point2d_list)
+        if fisheye:
+            self.ims = self.undistort(self.ims, calibs[0], calibs[1])
+            point2d_list = self.point2d(self.ims, debug=False)
+            calibs = self.calibrate(point3d_list, point2d_list)
         crops, fulls = self.rectify(point3d_list, point2d_list, calibs, size=size, d=depth, debug=False)
         camera_pos = self.get_camera_pos(calibs[2], calibs[3])
         self.save(crops, fulls, camera_pos, size)
@@ -73,7 +74,9 @@ class Capture:
         for i in range(self.n_of_imgs):
             im = self.ims[i]
             point3d = point3d_list[i]
-            point3d[:,2] -= d  # material plane is lower than markers plane
+            # material plane is lower than markers plane
+            # Warning: point3d[:, 2] -= d is incorrect here
+            point3d[:, 2] = -d  
             point2d = point2d_list[i]
 
             src_points, _ = cv2.projectPoints(
@@ -97,6 +100,7 @@ class Capture:
             im_crop = im_full[tmp:tmp+self.crop_res, tmp:tmp+self.crop_res, :]
             ims_crop.append(im_crop)
 
+        print("[DONE:Capture] Warp image")
         return ims_crop, ims_full
 
     def get_camera_pos(self, rvecs, tvecs):
@@ -120,6 +124,7 @@ class Capture:
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
                             point3d_list, point2d_list,
                             (self.W, self.H), None, None)
+        print("[DONE:Capture] Calibration")
         return mtx, dist, rvecs, tvecs
 
     def point2d(self, ims, debug=False):

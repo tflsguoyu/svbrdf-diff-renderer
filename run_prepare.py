@@ -8,7 +8,7 @@ from src.capture import Capture
 
 def prepare(data_dir, res):
 	input_obj = Capture(data_dir, res)
-	input_obj.eval(size=15.2, depth=0.0)
+	input_obj.eval(size=15.2, depth=0.1)
 
 
 if __name__ == "__main__":
