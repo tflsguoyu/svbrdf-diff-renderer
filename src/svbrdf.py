@@ -6,29 +6,14 @@ import json
 import tqdm
 import numpy as np
 import torch as th
-from pathlib import Path
-from lpips import LPIPS
-from src.descriptor import VGG19Loss
 from src.imageio import imread, imwrite, img9to1, tex4to1
 
+from src.optimization import Optim
 
-class SvbrdfOptim:
+class SvbrdfOptim(Optim):
 
-    def __init__(self, device):
-        self.device = device
-        self.loss_l2 = th.nn.MSELoss().to(device)
-        self.eps = 1e-4
-        self.loss_lpips = LPIPS(net='vgg').to(device)
-        for p in self.loss_lpips.parameters():
-            p.requires_grad = False
-        self.loss_vgg19 = VGG19Loss(device)
-        for p in self.loss_vgg19.parameters():
-            p.requires_grad = False
-
-    def gradient(self, parameters):
-        for idx, parameter in enumerate(parameters):
-            parameters[idx] = th.autograd.Variable(parameter, requires_grad=True)
-        return parameters
+    def __init__(self, device, loss_type="L2"):
+        super().__init__(device, loss_type)
 
     def load_textures_from_tex(self, textures):
         self.textures = self.gradient(textures)
@@ -51,44 +36,9 @@ class SvbrdfOptim:
         textures = [normal_th, diffuse_th, specular_th, roughness_th]
         self.textures = self.gradient(textures)
 
-    def load_targets(self, images):
-        self.targets_srgb = self.srgb(images)
-        self.loss_vgg19.load(self.targets_srgb)
-
-    def load_renderer(self, renderer):
-        self.renderer_obj = renderer
-
-    def srgb(self, images):
-        return images.clamp(self.eps, 1) * (1 / 2.2)
-
-    def compute_image_loss(self, predicts):
-        return self.loss_l2(self.srgb(predicts), self.targets_srgb)
-
-    def compute_lpips_loss(self, predicts):
-        return self.loss_lpips(self.srgb(predicts), self.targets_srgb, normalize=True).mean()
-
-    def compute_vgg19_loss(self, predicts):
-        return self.loss_vgg19(self.srgb(predicts))
-
     def optim(self, epochs, lr=0.01):
         self.optimizer = th.optim.Adam(self.textures, lr=lr, betas=(0.9, 0.999))
-
-        pbar = tqdm.trange(epochs)
-        for epoch in pbar:
-
-            # compute renderings
-            rendereds = self.renderer_obj.eval(self.textures)
-
-            # compute loss
-            # loss = self.compute_image_loss(rendereds)
-            # loss = self.compute_lpips_loss(rendereds)
-            loss = self.compute_vgg19_loss(rendereds)
-            pbar.set_postfix({"Loss": loss.item()})
-
-            # optimize
-            self.optimizer.zero_grad()
-            loss.backward()
-            self.optimizer.step()
+        self.iteration(epochs)
 
 
 class SvbrdfIO:
