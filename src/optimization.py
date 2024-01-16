@@ -5,7 +5,7 @@
 import tqdm
 import torch as th
 from lpips import LPIPS
-from src.descriptor import VGG19Loss
+from .descriptor import VGG19Loss
 
 class Optim:
 
@@ -66,3 +66,6 @@ class Optim:
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
+
+    def optim(self, epochs, lr):
+        raise NotImplementedError(f'Should be implemented in derived class!')

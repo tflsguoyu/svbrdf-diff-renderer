@@ -6,9 +6,9 @@ import json
 import tqdm
 import numpy as np
 import torch as th
-from src.imageio import imread, imwrite, img9to1, tex4to1
+from .imageio import imread, imwrite, img9to1, tex4to1
 
-from src.optimization import Optim
+from .optimization import Optim
 
 class SvbrdfOptim(Optim):
 

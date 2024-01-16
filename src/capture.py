@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 from pupil_apriltags import Detector # https://github.com/pupil-labs/apriltags
-from src.imageio import imread, imwrite
+from .imageio import imread, imwrite
 
 np.set_printoptions(precision=4, suppress=True)
 
