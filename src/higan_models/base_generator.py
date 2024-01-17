@@ -8,6 +8,8 @@ import numpy as np
 
 import torch
 
+# from . import model_settings  # Removed by Guo Yu
+
 __all__ = ['BaseGenerator']
 
 
@@ -43,7 +45,7 @@ def get_temp_logger(logger_name='logger'):
 class BaseGenerator(object):
   """Base class for generator used in GAN variants."""
 
-  def __init__(self, model_name, weight_path, tf_weight_path=None, logger=None):
+  def __init__(self, model_name, weight_path, tf_weight_path=None, logger=None):  # Modified by Guo Yu
     """Initializes with specific settings.
 
     The GAN model should be first registered in `model_settings.py` with proper
@@ -70,22 +72,27 @@ class BaseGenerator(object):
     self.logger = logger or get_temp_logger(model_name)
 
     # Parse settings.
-    self.use_cuda = torch.cuda.is_available()
-    self.batch_size = 4
-    self.ram_size = 800
+    # for key, val in model_settings.MODEL_POOL[model_name].items():  # Removed by Guo Yu
+    #   setattr(self, key, val)  # Removed by Guo Yu
+    self.use_cuda = torch.cuda.is_available()  # Modified by Guo Yu
+    self.batch_size = 4  # Modified by Guo Yu
+    self.ram_size = 800  # Modified by Guo Yu
     self.net = None
     self.run_device = 'cuda' if self.use_cuda else 'cpu'
     self.cpu_device = 'cpu'
 
     # Check necessary settings.
-    self.weight_path = weight_path
-    self.tf_weight_path = tf_weight_path
-    self.gan_type = 'stylegan2'
-    self.z_space_dim = 512
-    self.resolution = 256
-    self.min_val = -1.0
-    self.max_val = 1.0
-    self.image_channels = 9
+    self.weight_path = weight_path  # Modified by Guo Yu
+    self.tf_weight_path = tf_weight_path  # Modified by Guo Yu
+    self.gan_type = 'stylegan2'  # Modified by Guo Yu
+    self.z_space_dim = 512  # Modified by Guo Yu
+    self.resolution = 256  # Modified by Guo Yu
+    self.min_val = -1.0  # Modified by Guo Yu
+    self.max_val = 1.0  # Modified by Guo Yu
+    self.image_channels = 9  # Modified by Guo Yu
+    # assert self.image_channels in [1, 3]  # Removed by Guo Yu
+    # self.channel_order = getattr(self, 'channel_order', 'RGB').upper()  # Removed by Guo Yu
+    # assert self.channel_order in ['RGB', 'BGR']  # Removed by Guo Yu
 
     # Build graph and load pre-trained weights.
     self.logger.info(f'Build generator for model `{self.model_name}`.')

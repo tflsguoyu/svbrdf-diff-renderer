@@ -11,7 +11,6 @@ from src.microfacet import Microfacet
 from src.svbrdf import SvbrdfIO, SvbrdfOptim
 from src.materialgan import MaterialGANOptim
 
-
 def matarialgan_gen_textures(data_dir, res=256):
 
     device = th.device("cuda:0" if th.cuda.is_available() else "cpu")

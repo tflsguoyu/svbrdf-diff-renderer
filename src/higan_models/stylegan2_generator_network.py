@@ -19,6 +19,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from .. import globalvar  # Added by Guo Yu
 
 __all__ = ['StyleGAN2GeneratorNet']
 
@@ -600,6 +601,7 @@ class ModulateConvBlock(nn.Module):
                activation_type='lrelu',
                add_noise=True,
                randomize_noise=True,
+               optimize_noise=True,  # Added by Guo Yu
                epsilon=1e-8):
     """Initializes the class with block settings.
 
@@ -681,6 +683,7 @@ class ModulateConvBlock(nn.Module):
 
     self.add_noise = add_noise
     self.randomize_noise = randomize_noise
+    self.optimize_noise = optimize_noise  # Added by Guo Yu
     if add_noise:
       self.register_buffer('noise', torch.randn(1, 1, self.res, self.res))
       self.noise_strength = nn.Parameter(torch.zeros(()))
@@ -735,10 +738,17 @@ class ModulateConvBlock(nn.Module):
       x = x / _weight_norm.view(batch, self.out_c, 1, 1)
 
     if self.add_noise:
-      if self.randomize_noise:
-        noise = torch.randn(x.shape[0], 1, self.res, self.res).to(x)
+      if self.optimize_noise:  # Added by Guo Yu
+        noise = globalvar.noises[globalvar.noise_idx]
+        if globalvar.noise_idx == len(globalvar.noises) - 1:
+            globalvar.noise_idx = 0
+        else:
+            globalvar.noise_idx += 1
       else:
-        noise = self.noise
+        if self.randomize_noise:
+          noise = torch.randn(x.shape[0], 1, self.res, self.res).to(x)
+        else:
+          noise = self.noise
       x = x + noise * self.noise_strength.view(1, 1, 1, 1)
 
     if self.add_bias:

@@ -9,12 +9,15 @@ import tqdm
 from .optimization import Optim
 from .higan_models.stylegan2_generator import StyleGAN2Generator
 # We use the generator of StyleGAN2 from higan (https://github.com/genforce/higan)
+from .globalvar import init_global_noise
+
 
 class MaterialGANOptim(Optim):
 
     def __init__(self, device, renderer_obj, ckp):
         super().__init__(device, renderer_obj)
         self.net_obj = StyleGAN2Generator('MaterialGAN', ckp)
+        init_global_noise(device)
 
     def init_from_latent(self, init_from="random"):
         if init_from == "random":
