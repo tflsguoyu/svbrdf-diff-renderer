@@ -69,14 +69,18 @@ class Microfacet:
         normal    = th.stack((normal_x, normal_y, normal_z), 1)
         return self.normalize(normal)
 
+    def tex2map(self, textures):
+        # Reformats tensor from [1, 9, res, res] to four [N, 3, res, res] maps
+        diffuse = ((textures[:, 0:3, :, :] + 1) / 2).expand(self.n_of_imgs, -1, -1, -1)
+        normal = self.reconstruct_normal(textures[:, 3:5, :, :]).expand(self.n_of_imgs, -1, -1, -1)
+        roughness = ((textures[:, 5, :, :] + 1) / 2).expand(self.n_of_imgs, 3, -1, -1)
+        specular = ((textures[:, 6:9, :, :] + 1) / 2).expand(self.n_of_imgs, -1, -1, -1)
+
+        return normal, diffuse, specular, roughness
+
     def eval(self, textures):
 
-        # Reformats tensor to [N, 3, res, res]
-        normal_tmp, diffuse, specular, roughness = textures
-        normal = self.reconstruct_normal(normal_tmp).expand(self.n_of_imgs, -1, -1, -1)
-        diffuse = diffuse.clamp(0, 1).expand(self.n_of_imgs, -1, -1, -1)
-        specular = specular.clamp(0, 1).expand(self.n_of_imgs, -1, -1, -1)
-        roughness = roughness.clamp(0, 1).expand(self.n_of_imgs, 3, -1, -1)
+        normal, diffuse, specular, roughness = self.tex2map(textures)
 
         # Computes viewing direction, light direction, half angle
         v, _ = self.get_dir(self.camera_pos)

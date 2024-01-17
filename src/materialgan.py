@@ -4,6 +4,7 @@
 
 import os
 import torch as th
+import tqdm
 
 from .optimization import Optim
 from .higan_models.stylegan2_generator import StyleGAN2Generator
@@ -11,24 +12,15 @@ from .higan_models.stylegan2_generator import StyleGAN2Generator
 
 class MaterialGANOptim(Optim):
 
-    def __init__(self, device, ckp, loss_type="L2"):
-        super().__init__(device, loss_type)
+    def __init__(self, device, renderer_obj, ckp):
+        super().__init__(device, renderer_obj)
         self.net_obj = StyleGAN2Generator('MaterialGAN', ckp)
 
-    def init_latent(self, latent_type="w+", init_from="random"):
+    def init_from_latent(self, init_from="random"):
         if init_from == "random":
-            if latent_type == "z":
-                self.latent = th.randn(1,512).to(self.device)
-            elif latent_type == "w":
-                self.latent = th.randn(1,512).to(self.device)
-                self.latent = self.net_obj.net.mapping(self.latent)
-            elif latent_type == 'w+':
-                self.latent = th.randn(1,512).to(self.device)
-                self.latent = self.net_obj.net.mapping(self.latent)
-                self.latent = self.net_obj.net.truncation(self.latent)
-            else:
-                print("[ERROR:MaterialGANOptim] latent_type should be z|w|w+")
-                exit()
+            latent_z = th.randn(1,512).to(self.device)
+            latent_w = self.net_obj.net.mapping(latent_z)
+            self.latent = self.net_obj.net.truncation(latent_w)
         else:
             if os.path.exists(init_from):
                 self.latent = th.load(init_from).to(self.device)
@@ -37,30 +29,29 @@ class MaterialGANOptim(Optim):
                 exit()
 
     def latent_to_textures(self, latent_type="w+"):
-        if latent_type == 'z':
-            self.latent = self.net_obj.net.mapping(self.latent)
-            self.latent = self.net_obj.net.truncation(self.latent)
-        elif latent_type == 'w':
-            self.latent = self.net_obj.net.truncation(self.latent)
-        elif latent_type == 'w+':
-            pass
-        else:
-            print("[ERROR:MaterialGANOptim] latent_to_textures should be z|w|w+")
-            exit()
-
-        net_out = self.net_obj.net.synthesis(self.latent)
-        net_out = net_out.clamp(-1,1)
-
-        self.textures = self.netout_to_textures(net_out)
-
-    def netout_to_textures(self, netout):
-        diffuse_th = (netout[:, 0:3, :, :] + 1) * 0.5
-        normal_th = netout[:, 3:5, :, :]
-        roughness_th = (netout[:, 5, :, :] + 1) * 0.25 + 0.2 # convert to [0.2, 0.7]
-        specular_th = (netout[:, 6:9, :, :] + 1) * 0.5
-        return [normal_th, diffuse_th, specular_th, roughness_th]
-
+        textures = self.net_obj.net.synthesis(self.latent)
+        self.textures = textures.clamp(-1,1)
 
     def optim(self, epochs, lr=0.01):
-        self.optimizer = th.optim.Adam(self.textures, lr=lr, betas=(0.9, 0.999))
+        self.latent = th.autograd.Variable(self.latent, requires_grad=True)
+        self.optimizer = th.optim.Adam([self.latent], lr=lr, betas=(0.9, 0.999))
         self.iteration(epochs)
+
+    def iteration(self, epochs):
+        pbar = tqdm.trange(epochs)
+        for epoch in pbar:
+            # compute renderings
+            self.latent_to_textures()
+            rendereds = self.renderer_obj.eval(self.textures)
+
+            # compute loss
+            loss = self.compute_image_loss(rendereds)
+            # loss = self.compute_lpips_loss(rendereds)
+            # loss = self.compute_vgg19_loss(rendereds)
+            pbar.set_postfix({"Loss": loss.item()})
+
+            # optimize
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
+

@@ -12,33 +12,50 @@ from .optimization import Optim
 
 class SvbrdfOptim(Optim):
 
-    def __init__(self, device, loss_type="L2"):
-        super().__init__(device, loss_type)
+    def __init__(self, device, renderer_obj):
+        super().__init__(device, renderer_obj)
 
-    def load_textures_from_tex(self, textures):
+    def init_from_tex(self, textures):
         self.textures = self.gradient(textures)
 
-    def load_textures_from_const(self, res):
-        normal_th = th.zeros(1, 2, res, res, device=self.device)
-        diffuse_th = th.ones(1, 3, res, res, device=self.device) * 0.5
-        specular_th = th.ones(1, 3, res, res, device=self.device) * 0.04
-        roughness_th = th.ones(1, 1, res, res, device=self.device) * 0.2
+    def init_from_const(self, dif=0.5, spe=0.04, rgh=0.2):
+        normal_th = th.zeros(1, 2, self.res, self.res, device=self.device)
+        diffuse_th = th.ones(1, 3, self.res, self.res, device=self.device) * dif * 2 - 1
+        specular_th = th.ones(1, 3, self.res, self.res, device=self.device) * spe * 2 - 1
+        roughness_th = th.ones(1, 1, self.res, self.res, device=self.device) * rgh * 2 - 1
 
-        textures = [normal_th, diffuse_th, specular_th, roughness_th]
+        textures = th.cat((diffuse_th, normal_th, roughness_th, specular_th), 1)
         self.textures = self.gradient(textures)
 
-    def load_textures_from_randn(self, res):
-        normal_th = (th.randn(1, 2, res, res, device=self.device) / 4).clamp(-1, 1)
-        diffuse_th = (th.randn(1, 3, res, res, device=self.device) / 8 + 0.5).clamp(0, 1)
-        specular_th = (th.randn(1, 3, res, res, device=self.device) / 32 + 0.04).clamp(0, 1)
-        roughness_th = (th.randn(1, 1, res, res, device=self.device) / 16 + 0.2).clamp(0, 1)
+    def init_from_randn(self, dif=0.5, spe=0.04, rgh=0.2):
+        normal_th = (th.randn(1, 2, self.res, self.res, device=self.device) / 4).clamp(-1, 1)
+        diffuse_th = (th.randn(1, 3, self.res, self.res, device=self.device) / 8 + dif).clamp(0, 1) * 2 - 1
+        specular_th = (th.randn(1, 3, self.res, self.res, device=self.device) / 32 + spe).clamp(0, 1) * 2 - 1
+        roughness_th = (th.randn(1, 1, self.res, self.res, device=self.device) / 16 + rgh).clamp(0, 1) * 2 - 1
 
-        textures = [normal_th, diffuse_th, specular_th, roughness_th]
+        textures = th.cat((diffuse_th, normal_th, roughness_th, specular_th), 1)
         self.textures = self.gradient(textures)
 
     def optim(self, epochs, lr=0.01):
-        self.optimizer = th.optim.Adam(self.textures, lr=lr, betas=(0.9, 0.999))
+        self.optimizer = th.optim.Adam([self.textures], lr=lr, betas=(0.9, 0.999))
         self.iteration(epochs)
+
+    def iteration(self, epochs):
+        pbar = tqdm.trange(epochs)
+        for epoch in pbar:
+            # compute renderings
+            rendereds = self.renderer_obj.eval(self.textures)
+
+            # compute loss
+            loss = self.compute_image_loss(rendereds)
+            # loss = self.compute_lpips_loss(rendereds)
+            # loss = self.compute_vgg19_loss(rendereds)
+            pbar.set_postfix({"Loss": loss.item()})
+
+            # optimize
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
 
 
 class SvbrdfIO:
@@ -120,12 +137,12 @@ class SvbrdfIO:
             exit()
 
         normal_th = self.np_to_th(normal).permute(2, 0, 1).unsqueeze(0)
-        diffuse_th = self.np_to_th(diffuse).permute(2, 0, 1).unsqueeze(0)
-        specular_th = self.np_to_th(specular).permute(2, 0, 1).unsqueeze(0)
-        roughness_th = self.np_to_th(roughness).unsqueeze(0).unsqueeze(0)
+        diffuse_th = self.np_to_th(diffuse*2-1).permute(2, 0, 1).unsqueeze(0)
+        specular_th = self.np_to_th(specular*2-1).permute(2, 0, 1).unsqueeze(0)
+        roughness_th = self.np_to_th(roughness*2-1).unsqueeze(0).unsqueeze(0)
 
-        print("[DONE:SvbrdfIO] Load textures")
-        return [normal_th[:, :2, :, :], diffuse_th, specular_th, roughness_th]
+        print("[DONE:SvbrdfIO] Load textures (numbers in range [-1,1]")
+        return th.cat((diffuse_th, normal_th[:, :2, :, :], roughness_th, specular_th), 1)
 
 
     def save_textures_th(self, textures_th, opt_ref, res):
@@ -133,7 +150,10 @@ class SvbrdfIO:
         textures_dir = self.folder / self.textures_dir / f"{opt_ref}/{res}"
         textures_dir.mkdir(parents=True, exist_ok=True)
 
-        normal_th, diffuse_th, specular_th, roughness_th = textures_th
+        diffuse_th = (textures_th[:, 0:3, :, :] + 1) / 2
+        normal_th = textures_th[:, 3:5, :, :]
+        roughness_th = (textures_th[:, 5, :, :] + 1) / 2
+        specular_th = (textures_th[:, 6:9, :, :] + 1) / 2
         normal_th = self.reconstruct_normal(normal_th)
 
         normal = self.th_to_np(normal_th.squeeze().permute(1, 2, 0))
