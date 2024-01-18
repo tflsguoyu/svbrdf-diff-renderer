@@ -38,9 +38,6 @@ class SvbrdfOptim(Optim):
 
     def optim(self, epochs, lr=0.01):
         self.optimizer = th.optim.Adam([self.textures], lr=lr, betas=(0.9, 0.999))
-        self.iteration(epochs)
-
-    def iteration(self, epochs):
         pbar = tqdm.trange(epochs)
         for epoch in pbar:
             # compute renderings

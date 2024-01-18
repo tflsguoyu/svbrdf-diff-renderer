@@ -31,8 +31,14 @@ Tips:
 ### Render
 Run `python run_render.py`
 
-### Optimization
-Run `python run_optim.py`
+### Generate textures with MaterialGAN
+Run `pyton run_gentextures.py`
+
+### Optimization on SVBRDF maps directly
+Run `python run_optim_svbrdf.py`
+
+### Optimization on MaterialGAN latent space (TODO, still working on it)
+Run `python run_optim_ganlatent.py`
 
 ## Notes
 - TODO: add GAN part

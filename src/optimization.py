@@ -43,7 +43,7 @@ class Optim:
         self.res = targets.shape[-1]
 
     def srgb(self, images):
-        return images.clamp(self.eps, 1) * (1 / 2.2)
+        return images.clamp(self.eps, 1) ** (1 / 2.2)
 
     def compute_image_loss(self, predicts):
         return self.loss_l2(self.srgb(predicts), self.targets_srgb)
@@ -53,9 +53,6 @@ class Optim:
 
     def compute_vgg19_loss(self, predicts):
         return self.loss_vgg19(self.srgb(predicts))
-
-    def iteration(self, epochs):
-        raise NotImplementedError(f'Should be implemented in derived class!')
 
     def optim(self, epochs, lr):
         raise NotImplementedError(f'Should be implemented in derived class!')
