@@ -16,6 +16,9 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 ## Python dependencies
 numpy, torch, torchvision, opencv-python, lpips, tqdm, matplotlib, pupil_apriltags
 
+## Pretrained MaterialGAN model
+Download [`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth?rlkey=ykovb3owafmz6icvss13sdddl&dl=0) to `tool` folder.
+
 ## Usage
 ### Capture your own data with smartphone
 1. Print "tool/tag36h11_print.png" on a solid paper with proper size and crop the center area.
