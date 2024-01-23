@@ -37,15 +37,15 @@ You can use synthetic SVBRDF maps from 3rd party.
 4. The generated target images are in `data/card_blue/target/img/256`
 
 ### Capture your own data with smartphone
-<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/tool/fig1.png" width="600px">
 1. Print "tool/tag36h11_print.png" on a solid paper with a proper size and crop the center area.
-2. Measure `size`(in cm unit) with a ruler, see the red line in above figure.
+2. Measure `size`(in cm unit) with a ruler, see the red arrow line in below figure.
 3. Place it on the material you want to capture, and make the paper as flat as possible.
 4. Turn on camera flashlight and capture images from different views.
 5. Create a data folder, e.g `data/yellow_box`, and copy captured images to `data/yellow_box/raw`.
 6. Run `python run_prepare.py`. 
 The `size` here in `input_obj.eval(size=17, depth=0.1)` is the number you measured from step 2. `depth` is distance (in cm unit) between marker plane and material plane. For example, if you attach the markers on a thick cardboard, you should use a larger `depth`.
 7. The generate target images is located in `data/yellow_box/target/img/1024` and corresponding `.json` file is generated as well.
+<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/tool/fig1.png" width="600px">
 
 Tips:
 1. All markers should be captured and in focus and the letter `A` should be facing up.
