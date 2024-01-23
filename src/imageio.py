@@ -95,8 +95,7 @@ def imconcat(im_list, size=(2, 2)):
 
 def img9to1(folder):
     ims = []
-    id_list = [3,5,1,7,0,8,2,6,4]
-    for i in id_list:
+    for i in range(9):
         ims.append(imread(folder / f"{i:02d}.png"))
 
     im = imconcat(ims, (3, 3))

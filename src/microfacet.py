@@ -8,7 +8,7 @@ import torch as th
 class Microfacet:
 
     def __init__(self, res, n, size, cl, device):
-        # Verified
+        self.res = res
         self.n_of_imgs = n
         self.f0 = 0.04
         self.eps = 1e-6
@@ -79,6 +79,8 @@ class Microfacet:
         return normal, diffuse, specular, roughness
 
     def eval(self, textures):
+        assert(textures.shape[2] == textures.shape[3])
+        assert(self.res == textures.shape[2])
 
         normal, diffuse, specular, roughness = self.tex2map(textures)
 

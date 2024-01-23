@@ -7,13 +7,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 from pupil_apriltags import Detector # https://github.com/pupil-labs/apriltags
-from .imageio import imread, imwrite
+from .imageio import imread, imwrite, img9to1
 
 np.set_printoptions(precision=4, suppress=True)
 
 class Capture:
 
-    def __init__(self, folder, res):
+    def __init__(self, folder):
         self.detector = Detector()
 
         raw_dir = folder / "raw"
@@ -27,10 +27,10 @@ class Capture:
         self.n_of_imgs = len(self.ims)
         self.full_res = 1600
         self.crop_res = 1024
-        self.final_res = 1024
 
-        self.json_dir = folder / "parameters.json"
-        self.save_to = folder / f"images/reference/{self.crop_res}"
+        self.json_dir = folder / "optim.json"
+        self.save_to_relative = f"target/img/{self.crop_res}"
+        self.save_to = folder / self.save_to_relative
 
     def eval(self, size, depth, fisheye=True):
         point3d_list = self.point3d(size=size, debug=False)
@@ -47,7 +47,9 @@ class Capture:
     def save(self, ims, tmps, camera_pos, size):
         self.save_to.mkdir(parents=True, exist_ok=True)
         for i in range(self.n_of_imgs):
-            imwrite(ims[i], self.save_to / f"{i:02d}.png", dim=(self.final_res, self.final_res))
+            imwrite(ims[i], self.save_to / f"{i:02d}.png", dim=(self.crop_res, self.crop_res))
+        if self.n_of_imgs == 9:
+            img9to1(self.save_to)
 
         tmp_dir = self.save_to / "tmp"
         tmp_dir.mkdir(parents=True, exist_ok=True)
@@ -56,9 +58,10 @@ class Capture:
 
         data = {
             "_comment": "in cm uint",
-            "textures_dir": "textures",
-            "images_dir": "images",
-            "image_size": size / self.full_res * self.crop_res,
+            "target_dir": self.save_to_relative,
+            "optimize_dir": f"optim/tex/256",
+            "rerender_dir": f"optim/img/256",
+            "im_size": size / self.full_res * self.crop_res,
             "idx": list(range(self.n_of_imgs)),
             "camera_pos": camera_pos.tolist(),
             "light_pos": camera_pos.tolist(),

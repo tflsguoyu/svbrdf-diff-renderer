@@ -12,13 +12,13 @@ from src.svbrdf import SvbrdfIO
 from src.materialgan import MaterialGANOptim
 
 
-def optim_materialgan(data_dir, res, epochs):
+def optim_ganlatent(json_dir, res, epochs):
 
     device = th.device("cuda:0" if th.cuda.is_available() else "cpu")
     # device = th.device("cpu")
 
-    svbrdf_obj = SvbrdfIO(data_dir, device)
-    targets = svbrdf_obj.load_images_th("reference", "1024", res)
+    svbrdf_obj = SvbrdfIO(json_dir, device)
+    targets = svbrdf_obj.load_images_th(svbrdf_obj.target_dir, res)
 
     renderer_obj = Microfacet(res, svbrdf_obj.n_of_imgs, svbrdf_obj.im_size, svbrdf_obj.cl, device)
 
@@ -28,11 +28,12 @@ def optim_materialgan(data_dir, res, epochs):
 
     optim_obj.optim(epochs)
 
-    svbrdf_obj.save_textures_th(optim_obj.textures, "optimized", res)
+    svbrdf_obj.save_textures_th(optim_obj.textures, svbrdf_obj.optimize_dir)
     rendereds = renderer_obj.eval(optim_obj.textures)
-    svbrdf_obj.save_images_th(rendereds, "optimized", res)
+    svbrdf_obj.save_images_th(rendereds, svbrdf_obj.rerender_dir)
 
 
 if __name__ == "__main__":
-    data_dir = Path("data/card_blue")
-    optim_materialgan(data_dir, 256, 1000)
+    json_dir = Path("data/card_blue/optim.json")
+    # json_dir = Path("data/yellow_box/optim.json")
+    optim_ganlatent(json_dir, 256, 1000)

@@ -4,14 +4,8 @@
 
 from pathlib import Path
 from src.imageio import img9to1, tex4to1
-from run_render import render
-from run_optim import optim
-
 
 data_dir = Path("data/card_blue")
 
-img9to1(data_dir / "images/reference/1024")
+img9to1(data_dir / "images/reference/256")
 tex4to1(data_dir / "textures/reference/256")
-
-optim(data_dir, 256, 100)
-render(data_dir, "optimized", 256)

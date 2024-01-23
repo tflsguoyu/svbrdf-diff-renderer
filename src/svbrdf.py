@@ -45,8 +45,6 @@ class SvbrdfOptim(Optim):
 
             # compute loss
             loss = self.compute_image_loss(rendereds)
-            # loss = self.compute_lpips_loss(rendereds)
-            # loss = self.compute_vgg19_loss(rendereds)
             pbar.set_postfix({"Loss": loss.item()})
 
             # optimize
@@ -57,11 +55,9 @@ class SvbrdfOptim(Optim):
 
 class SvbrdfIO:
 
-    def __init__(self, folder, device):
-        self.folder = folder
+    def __init__(self, json_dir, device):
         self.device = device
 
-        json_dir = folder / "parameters.json"
         if not json_dir.exists():
             print(f"[ERROR:SvbrdfIO:init] {json_dir} is not exists")
             exit()
@@ -69,14 +65,20 @@ class SvbrdfIO:
         with open(json_dir, "r") as f:
             data = json.load(f)
 
-        self.textures_dir = data["textures_dir"]
-        self.images_dir = data["images_dir"]
-        self.im_size = data["image_size"]
-        self.index = data["idx"]
+        if "reference_dir" in data:
+            self.reference_dir = json_dir.parent / data["reference_dir"] 
+        if "target_dir" in data:
+           self.target_dir = json_dir.parent / data["target_dir"]
+        if "optimize_dir" in data:
+           self.optimize_dir = json_dir.parent / data["optimize_dir"]
+        if "rerender_dir" in data:
+           self.rerender_dir = json_dir.parent / data["rerender_dir"]
+        self.im_size = data["im_size"]
+        self.idx = data["idx"]
         self.camera_pos = data["camera_pos"]
         self.light_pos = data["light_pos"]
         self.light_pow = data["light_pow"]
-        self.n_of_imgs = len(self.index)
+        self.n_of_imgs = len(self.idx)
 
         self.load_calibration_th()
 
@@ -105,8 +107,8 @@ class SvbrdfIO:
         light_pos = np.array(self.light_pos, "float32")
         light_pow = np.array(self.light_pow, "float32")
 
-        camera_pos = camera_pos[self.index, :]
-        light_pos = light_pos[self.index, :]
+        camera_pos = camera_pos[self.idx, :]
+        light_pos = light_pos[self.idx, :]
 
         camera_pos_th = self.np_to_th(camera_pos)
         light_pos_th = self.np_to_th(light_pos)
@@ -117,9 +119,7 @@ class SvbrdfIO:
         print("[DONE:SvbrdfIO] Load parameters")
 
 
-    def load_textures_th(self, opt_ref, res):
-        # opt_ref is either str("optimized") or str("reference")
-        textures_dir = self.folder / self.textures_dir / f"{opt_ref}/{res}"
+    def load_textures_th(self, textures_dir):
         if not textures_dir.exists:
             print(f"[ERROR:SvbrdfIO:load_textures_th] {textures_dir} is not exists")
             exit()
@@ -129,22 +129,16 @@ class SvbrdfIO:
         specular = imread(textures_dir / "spe.png", "srgb")
         roughness = imread(textures_dir / "rgh.png", "rough")
 
-        if normal.shape[0] != res or normal.shape[1] != res:
-            print(f"[ERROR:SvbrdfIO:load_textures_th] textures in {textures_dir} have wrong resolution")
-            exit()
-
         normal_th = self.np_to_th(normal).permute(2, 0, 1).unsqueeze(0)
         diffuse_th = self.np_to_th(diffuse*2-1).permute(2, 0, 1).unsqueeze(0)
         specular_th = self.np_to_th(specular*2-1).permute(2, 0, 1).unsqueeze(0)
         roughness_th = self.np_to_th(roughness*2-1).unsqueeze(0).unsqueeze(0)
 
-        print("[DONE:SvbrdfIO] Load textures (numbers in range [-1,1]")
+        print("[DONE:SvbrdfIO] Load textures (numbers in range [-1,1])")
         return th.cat((diffuse_th, normal_th[:, :2, :, :], roughness_th, specular_th), 1)
 
 
-    def save_textures_th(self, textures_th, opt_ref, res):
-        # opt_ref is either str("optimized") or str("reference")
-        textures_dir = self.folder / self.textures_dir / f"{opt_ref}/{res}"
+    def save_textures_th(self, textures_th, textures_dir):
         textures_dir.mkdir(parents=True, exist_ok=True)
 
         diffuse_th = (textures_th[:, 0:3, :, :] + 1) / 2
@@ -158,10 +152,6 @@ class SvbrdfIO:
         specular = self.th_to_np(specular_th.squeeze().permute(1, 2, 0))
         roughness = self.th_to_np(roughness_th.squeeze())
 
-        if normal.shape[0] != res or normal.shape[1] != res:
-            print(f"[ERROR:SvbrdfIO:save_textures_th] textures in {textures_dir} have wrong resolution")
-            exit()
-
         imwrite(normal, textures_dir / "nom.png", "normal")
         imwrite(diffuse, textures_dir / "dif.png", "srgb")
         imwrite(specular, textures_dir / "spe.png", "srgb")
@@ -172,34 +162,30 @@ class SvbrdfIO:
         print("[DONE:SvbrdfIO] Save textures")
 
 
-    def load_images_th(self, opt_ref, res, res2=None):
-        # opt_ref is either str("optimized") or str("reference")
-        images_dir = self.folder / self.images_dir / f"{opt_ref}/{res}"
+    def load_images_th(self, images_dir, res=256):
         if not images_dir.exists:
             print(f"[ERROR:SvbrdfIO:load_images_th] {images_dir} is not exists")
             exit()
 
-        images = np.zeros((self.n_of_imgs, 3, res2, res2), dtype="float32")
+        images = np.zeros((self.n_of_imgs, 3, res, res), dtype="float32")
         images_th = self.np_to_th(images)
-        for i, idx in enumerate(self.index):
+        for i, idx in enumerate(self.idx):
             fn_image = images_dir / f"{idx:02d}.png"
-            image = imread(fn_image, "srgb", (res2, res2))
+            image = imread(fn_image, "srgb", (res, res))
             images_th[i,:,:,:] = self.np_to_th(image).permute(2, 0, 1)
 
         print("[DONE:SvbrdfIO] Load images")
         return images_th
 
 
-    def save_images_th(self, images_th, opt_ref, res):
-        # opt_ref is either str("optimized") or str("reference")
-        images_dir = self.folder / self.images_dir / f"{opt_ref}/{res}"
+    def save_images_th(self, images_th, images_dir):
         images_dir.mkdir(parents=True, exist_ok=True)
 
         if images_th.shape[0] != self.n_of_imgs:
             print(f"[ERROR:SvbrdfIO:save_images_th]")
             exit()
 
-        for i, idx in enumerate(self.index):
+        for i, idx in enumerate(self.idx):
             image = self.th_to_np(images_th[i, :, :, :].permute(1, 2, 0))
             fn_image = images_dir / f"{idx:02d}.png"
             imwrite(image, fn_image, "srgb")

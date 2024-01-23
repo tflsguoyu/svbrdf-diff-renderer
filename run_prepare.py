@@ -6,11 +6,12 @@ import os
 from pathlib import Path
 from src.capture import Capture
 
-def prepare(data_dir, res):
-	input_obj = Capture(data_dir, res)
-	input_obj.eval(size=15.2, depth=0.1)
+def prepare(data_dir):
+    input_obj = Capture(data_dir)
+    input_obj.eval(size=17.0, depth=0.1)
 
 
 if __name__ == "__main__":
-	data_dir = Path("data/bath_tile")
-	prepare(data_dir, 1024)
+    # if HEIC format, please convert images to PNG first
+    data_dir = Path("data/yellow_box") 
+    prepare(data_dir)
