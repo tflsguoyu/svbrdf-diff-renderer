@@ -37,7 +37,7 @@ You can use synthetic SVBRDF maps from 3rd party.
 4. The generated target images are in `data/card_blue/target/img/256`
 
 ### Capture your own data with smartphone
-<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/github/tool/fig1.png" width="1000px">
+<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/tool/fig1.png" width="1000px">
 1. Print "tool/tag36h11_print.png" on a solid paper with a proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red line in above figure.
 3. Place it on the material you want to capture, and make the paper as flat as possible.
