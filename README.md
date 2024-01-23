@@ -29,7 +29,7 @@ You can generate random textures by using MaterialGAN.
 2. Run `pyton run_gentextures.py`.
 3. The generated SVBRDF maps are in `data/random/target/tex/256` and target images are in `data/random/target/img/256`
 
-### Existing textures from other places
+### Existing textures
 You can use synthetic SVBRDF maps from 3rd party.
 1. Create a data folder, e.g. `data/card_blue`, and a `.json` file `data/card_blue/target.json` similar to previous one.
 2. Rename and copy SVBRDF maps to `data/card_blue/target/tex/256`. It should contain 4 maps, `dif.png`: diffuse albedo; `nom.png`: normal map; `rgh.png`: roughness; `spe.png`: specular albedo. You can use `tex4to1()` in `run_unittest.py` to combine 4 images, but not necessary.
@@ -37,7 +37,7 @@ You can use synthetic SVBRDF maps from 3rd party.
 4. The generated target images are in `data/card_blue/target/img/256`
 
 ### Capture your own data with smartphone
-<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/tool/fig1.png" width="1000px">
+<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/tool/fig1.png" width="800px">
 1. Print "tool/tag36h11_print.png" on a solid paper with a proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red line in above figure.
 3. Place it on the material you want to capture, and make the paper as flat as possible.
