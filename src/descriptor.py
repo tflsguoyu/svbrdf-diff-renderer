@@ -5,7 +5,7 @@ from torchvision.transforms import Normalize
 
 class VGG19Loss(th.nn.Module):
 
-    def __init__(self, device):
+    def __init__(self, device, weight="1111"):
         super(VGG19Loss, self).__init__()
         self.criterion = th.nn.MSELoss().to(device)
 
@@ -23,14 +23,20 @@ class VGG19Loss(th.nn.Module):
 
         # print(self.net)
 
+        for i in [1, 3, 13, 22]: # r11, r12, r32, r42
+            self.net[i].register_forward_hook(hook)
+        if weight == "1148":
+            self.weights = [0.071, 0.071, 0.286, 0.572]
+        elif weight == "8821":
+            self.weights = [0.421, 0.421, 0.105, 0.053]
+        else:
+            self.weights = [0.25, 0.25, 0.25, 0.25]
+
+
         # for i in [4, 9, 18, 27, 36]: # r12, r22, r34, r44, r54
         #     self.net[i].register_forward_hook(hook)
         # # weight proportional to num. of feature channels [Aittala 2016]
         # self.weights = [1, 2, 4, 8, 8]
-
-        for i in [1, 3, 13, 22]: # r11, r12, r32, r42
-            self.net[i].register_forward_hook(hook)
-        self.weights = [1, 1, 4, 8]
 
         # for i in [3, 8, 15, 24]: # r12, r22, r33, r43
         #     self.net[i].register_forward_hook(hook)

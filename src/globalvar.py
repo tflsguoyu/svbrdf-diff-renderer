@@ -29,7 +29,7 @@ def init_global_noise(device, init_from="random"):
         noise_256_2 = randn_noise(256)
     else:
         if os.path.exists(init_from):
-            noises_list = th.load(init_from)
+            noises_list = th.load(init_from, map_location=device)
             noise_4_1 = noises_list[0]
             noise_8_1 = noises_list[1]
             noise_8_2 = noises_list[2]

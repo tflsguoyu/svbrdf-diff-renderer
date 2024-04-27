@@ -130,3 +130,6 @@ dmypy.json
 
 # pytorch checkpoint
 *.pth
+
+data/card_blue/optim_pixel
+data/card_blue/optim_latent

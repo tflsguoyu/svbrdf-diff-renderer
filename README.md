@@ -25,13 +25,13 @@ We provide 3 kinds of target images generation methods here,
 
 ### Random textures
 You can generate random textures by using MaterialGAN.
-1. Create a data folder, e.g. `data/random`, and a `.json` file `data/random/target.json`. You can define how many target images will be created (`idx`) and their coresponding camera/light positions (`camera_pos` and `light_pos`).  
-2. Run `pyton run_gentextures.py`.
+1. Create a data folder, e.g. `data/random`, and `target.json` file in it. You can define how many target images will be created (`idx`) and their coresponding camera/light positions (`camera_pos` and `light_pos`).  
+2. Run `python run_gentextures.py`.
 3. The generated SVBRDF maps are in `data/random/target/tex/256` and target images are in `data/random/target/img/256`
 
 ### Existing textures
 You can use synthetic SVBRDF maps from 3rd party.
-1. Create a data folder, e.g. `data/card_blue`, and a `.json` file `data/card_blue/target.json` similar to previous one.
+1. Create a data folder, e.g. `data/card_blue`, and `target.json` file in it similar to previous one.
 2. Rename and copy SVBRDF maps to `data/card_blue/target/tex/256`. It should contain 4 maps, `dif.png`: diffuse albedo; `nom.png`: normal map; `rgh.png`: roughness; `spe.png`: specular albedo. You can use `tex4to1()` in `run_unittest.py` to combine 4 images, but not necessary.
 3. Run `python run_render.py`.
 4. The generated target images are in `data/card_blue/target/img/256`
@@ -44,7 +44,7 @@ You can use synthetic SVBRDF maps from 3rd party.
 5. Create a data folder, e.g `data/yellow_box`, and copy captured images to `data/yellow_box/raw`.
 6. Run `python run_prepare.py`. 
 The `size` here in `input_obj.eval(size=17, depth=0.1)` is the number you measured from step 2. `depth` is distance (in cm unit) between marker plane and material plane. For example, if you attach the markers on a thick cardboard, you should use a larger `depth`.
-7. The generate target images is located in `data/yellow_box/target/img/1024` and corresponding `.json` file is generated as well.
+7. The generate target images is located in `data/yellow_box/target/img/1024` and corresponding `optim.json` file is generated as well.
 <img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/tool/fig1.png" width="600px">
 
 Tips:

@@ -36,7 +36,7 @@ class SvbrdfOptim(Optim):
         textures = th.cat((diffuse_th, normal_th, roughness_th, specular_th), 1)
         self.textures = self.gradient(textures)
 
-    def optim(self, epochs, lr=0.01):
+    def optim(self, epochs, lr, svbrdf_obj):
         self.optimizer = th.optim.Adam([self.textures], lr=lr, betas=(0.9, 0.999))
         pbar = tqdm.trange(epochs)
         for epoch in pbar:
