@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # pytorch checkpoint
+*.pt
 *.pth
 
 data/card_blue/optim_pixel

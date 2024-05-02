@@ -6,7 +6,7 @@ import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
 from lpips import LPIPS
-from .descriptor import VGG19Loss
+from .descriptor import VGGLoss
 
 class Optim:
 
@@ -24,11 +24,11 @@ class Optim:
                 p.requires_grad = False
 
         if self.use_vgg19:
-            self.loss_large_feature = VGG19Loss(device, "1148")
+            self.loss_large_feature = VGGLoss(device, np.array([1,1,4,8])/14)
             for p in self.loss_large_feature.parameters():
                 p.requires_grad = False
 
-            self.loss_small_feature = VGG19Loss(device, "8821")
+            self.loss_small_feature = VGGLoss(device, np.array([8,8,2,1])/14)
             for p in self.loss_small_feature.parameters():
                 p.requires_grad = False
 

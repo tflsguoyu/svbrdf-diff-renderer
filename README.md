@@ -17,7 +17,12 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 numpy, torch, torchvision, opencv-python, lpips, tqdm, matplotlib, pupil_apriltags, pillow-heif
 
 ## Pretrained MaterialGAN model
-Download [`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth?rlkey=ykovb3owafmz6icvss13sdddl&dl=0) to `tool` folder.
+Download all the checkpoints to `ckp`: 
+[`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth)
+[`latent_avg_W+_256.pt`](https://www.dropbox.com/scl/fi/nf4kfoiqx6h7baxpbfu01/latent_avg_W-_256.pt)
+[`latent_const_W+_256.pt`](https://www.dropbox.com/scl/fi/mdh8boshpfc6lwktrfh4i/latent_const_W-_256.pt)
+[`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt)
+[`vgg_conv.pt`](https://www.dropbox.com/scl/fi/hp8bxxyejkw7d9a9gxxhc/vgg_conv.pt)
 
 ## Generate target images for optimization
 To get an optimized SVBRDF maps, we need target images and a corresponding json file. 
@@ -37,7 +42,7 @@ You can use synthetic SVBRDF maps from 3rd party.
 4. The generated target images are in `data/card_blue/target/img/256`
 
 ### Capture your own data with smartphone
-1. Print "tool/tag36h11_print.png" on a solid paper with a proper size and crop the center area.
+1. Print "fig/tag36h11_print.png" on a solid paper with a proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red arrow line in below figure.
 3. Place it on the material you want to capture, and make the paper as flat as possible.
 4. Turn on camera flashlight and capture images from different views.
@@ -45,7 +50,7 @@ You can use synthetic SVBRDF maps from 3rd party.
 6. Run `python run_prepare.py`. 
 The `size` here in `input_obj.eval(size=17, depth=0.1)` is the number you measured from step 2. `depth` is distance (in cm unit) between marker plane and material plane. For example, if you attach the markers on a thick cardboard, you should use a larger `depth`.
 7. The generate target images is located in `data/yellow_box/target/img/1024` and corresponding `optim.json` file is generated as well.
-<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/tool/fig1.png" width="600px">
+<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
 
 Tips:
 1. All markers should be captured and in focus and the letter `A` should be facing up.

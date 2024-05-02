@@ -86,7 +86,7 @@ class MaterialGANOptim(Optim):
             # loss_lpips_list.append(loss_lpips.item())
             # loss += loss_lpips
 
-            loss_feature = self.compute_feature_loss(rendereds, which_to_optimize) * 10
+            loss_feature = self.compute_feature_loss(rendereds, which_to_optimize)
             loss_feature_list.append(loss_feature.item())
             loss += loss_feature
 
