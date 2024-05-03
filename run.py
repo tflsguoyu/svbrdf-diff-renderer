@@ -22,7 +22,7 @@ if False:
 
 # Render texture maps
 if False:
-    render(Path("data/random/render.json"))
+    render(Path("data/random/render.json"), 1024)
 
 
 # Capture your own data
@@ -32,7 +32,7 @@ if False:
 
 # Optimize texture maps directly on pixels, baseline method
 if False:
-    optim_perpixel(Path("data/card_blue/optim_pixel.json"), 1024, 0.01, 1000, tex_init="const")
+    optim_perpixel(Path("data/card_blue/optim_pixel.json"), 1024, 0.01, 1000, tex_init="random")
 
 
 # Optimize texture maps by MaterialGAN for resolution 256x256

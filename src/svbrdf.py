@@ -6,9 +6,11 @@ import json
 import tqdm
 import numpy as np
 import torch as th
-from .imageio import imread, imwrite, img9to1, tex4to1
+from datetime import datetime
 
+from .imageio import imread, imwrite, img9to1, tex4to1
 from .optimization import Optim
+
 
 class SvbrdfOptim(Optim):
 
@@ -37,20 +39,38 @@ class SvbrdfOptim(Optim):
         self.textures = self.gradient(textures)
 
     def optim(self, epochs, lr, svbrdf_obj):
+        tmp_dir = svbrdf_obj.optimize_dir / "tmp" / str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+
         self.optimizer = th.optim.Adam([self.textures], lr=lr, betas=(0.9, 0.999))
+        
+        loss_image_list = []
         pbar = tqdm.trange(epochs)
         for epoch in pbar:
             # compute renderings
-            rendereds = self.renderer_obj.eval(self.textures)
+            rendereds = self.renderer_obj.eval(self.textures.clamp(-1, 1))
 
             # compute loss
             loss = self.compute_image_loss(rendereds)
+            loss_image_list.append(loss.item())
             pbar.set_postfix({"Loss": loss.item()})
 
             # optimize
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
+
+            # save process
+            if (epoch + 1) % 100 == 0 or epoch == 0 or epoch == (epochs - 1):
+                tmp_this_dir = tmp_dir / f"{epoch + 1}"
+                tmp_this_dir.mkdir(parents=True, exist_ok=True)
+
+                self.save_loss([loss_image_list], ["image loss"], tmp_dir / "loss.jpg", epochs)
+
+                svbrdf_obj.save_textures_th(self.textures.clamp(-1, 1), tmp_this_dir)
+
+                rendereds = self.renderer_obj.eval(self.textures.clamp(-1, 1))
+                svbrdf_obj.save_images_th(rendereds, tmp_this_dir)
 
 
 class SvbrdfIO:
@@ -123,17 +143,15 @@ class SvbrdfIO:
         print("[DONE:SvbrdfIO] Load parameters")
 
 
-    def load_textures_th(self, textures_dir):
+    def load_textures_th(self, textures_dir, res):
         if not textures_dir.exists:
             print(f"[ERROR:SvbrdfIO:load_textures_th] {textures_dir} is not exists")
             exit()
 
-        normal = imread(textures_dir / "nom.png", "normal")
-        diffuse = imread(textures_dir / "dif.png", "srgb")
-        specular = imread(textures_dir / "spe.png", "srgb")
-        roughness = imread(textures_dir / "rgh.png", "rough")
-
-        self.res = roughness.shape[0]
+        normal = imread(textures_dir / "nom.png", "normal", (res, res))
+        diffuse = imread(textures_dir / "dif.png", "srgb", (res, res))
+        specular = imread(textures_dir / "spe.png", "srgb", (res, res))
+        roughness = imread(textures_dir / "rgh.png", "rough", (res, res))
 
         normal_th = self.np_to_th(normal).permute(2, 0, 1).unsqueeze(0)
         diffuse_th = self.np_to_th(diffuse*2-1).permute(2, 0, 1).unsqueeze(0)
