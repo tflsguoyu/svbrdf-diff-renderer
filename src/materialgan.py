@@ -53,7 +53,7 @@ class MaterialGANOptim(Optim):
         return textures
 
     def optim(self, epochs, lr, svbrdf_obj):
-        tmp_dir = svbrdf_obj.optimize_dir / "tmp" / str(datetime.now())
+        tmp_dir = svbrdf_obj.optimize_dir / "tmp" / str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
         tmp_dir.mkdir(parents=True, exist_ok=True)
 
         total_epochs, l_epochs, n_epochs = epochs
