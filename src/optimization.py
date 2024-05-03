@@ -28,7 +28,7 @@ class Optim:
             for p in self.loss_large_feature.parameters():
                 p.requires_grad = False
 
-            self.loss_small_feature = VGGLoss(device, np.array([8,8,2,1])/14)
+            self.loss_small_feature = VGGLoss(device, np.array([8,8,2,1])/19)
             for p in self.loss_small_feature.parameters():
                 p.requires_grad = False
 
@@ -43,26 +43,23 @@ class Optim:
         return parameters
 
     def load_targets(self, targets):
-        self.targets_srgb = self.srgb(targets)
         if self.use_vgg19:
-            self.loss_large_feature.load(self.targets_srgb)
-            self.loss_small_feature.load(self.targets_srgb)
+            self.loss_large_feature.load(targets)
+            self.loss_small_feature.load(targets)
         self.res = targets.shape[-1]
-
-    def srgb(self, images):
-        return images.clamp(self.eps, 1) ** (1 / 2.2)
+        self.targets = targets
 
     def compute_image_loss(self, predicts):
-        return self.loss_l2(self.srgb(predicts), self.targets_srgb)
+        return self.loss_l2(predicts, self.targets)
 
     def compute_lpips_loss(self, predicts):
-        return self.loss_lpips(self.srgb(predicts), self.targets_srgb, normalize=True).mean()
+        return self.loss_lpips(predicts, self.targets, normalize=True).mean()
 
     def compute_feature_loss(self, predicts, flag):
         if flag == "L":
-            return self.loss_large_feature(self.srgb(predicts))
+            return self.loss_large_feature(predicts)
         elif flag == "N":
-            return self.loss_small_feature(self.srgb(predicts))
+            return self.loss_small_feature(predicts)
         else:
             exit()
 

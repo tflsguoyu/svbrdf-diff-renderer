@@ -71,10 +71,10 @@ class Microfacet:
 
     def tex2map(self, textures):
         # Reformats tensor from [1, 9, res, res] to four [N, 3, res, res] maps
-        diffuse = ((textures[:, 0:3, :, :] + 1) / 2).expand(self.n_of_imgs, -1, -1, -1)
+        diffuse = (((textures[:, 0:3, :, :] + 1) / 2) ** 2.2).expand(self.n_of_imgs, -1, -1, -1)
         normal = self.reconstruct_normal(textures[:, 3:5, :, :]).expand(self.n_of_imgs, -1, -1, -1)
-        roughness = ((textures[:, 5, :, :] + 1) / 2).expand(self.n_of_imgs, 3, -1, -1)
-        specular = ((textures[:, 6:9, :, :] + 1) / 2).expand(self.n_of_imgs, -1, -1, -1)
+        roughness = (((textures[:, 5, :, :] + 1) / 2) ** 2.2).expand(self.n_of_imgs, 3, -1, -1)
+        specular = (((textures[:, 6:9, :, :] + 1) / 2) ** 2.2).expand(self.n_of_imgs, -1, -1, -1)
 
         return normal, diffuse, specular, roughness
 
@@ -113,4 +113,4 @@ class Microfacet:
         img = self.light_pow * f * n_dot_l / dist_l_sq
 
         # print("[DONE:Microfacet] rendering")
-        return img.clamp(0, 1)
+        return img.clamp(self.eps, 1) ** (1 / 2.2)

@@ -41,15 +41,16 @@ class MaterialGANOptim(Optim):
         else:
             init_global_noise(self.device, init_from="random")
 
-    def latent_to_textures(self):
-        textures = self.net_obj.net.synthesis(self.latent)
+    def latent_to_textures(self, latent):
+        textures_tmp = self.net_obj.net.synthesis(latent)
         # Option 1: 
         # self.textures = textures.clamp(-1,1)
         # Option 2:
-        self.textures = textures.clone()
-        self.textures[:,0:5,:,:] = textures[:,0:5,:,:].clamp(-1,1)
-        self.textures[:,5,:,:] = textures[:,5,:,:].clamp(-0.3,0.5)
-        self.textures[:,6:9,:,:] = textures[:,6:9,:,:].clamp(-1,1)
+        textures = textures_tmp.clone()
+        textures[:,0:5,:,:] = textures_tmp[:,0:5,:,:].clamp(-1,1)
+        textures[:,5,:,:] = textures_tmp[:,5,:,:].clamp(-0.3,1)
+        textures[:,6:9,:,:] = textures_tmp[:,6:9,:,:].clamp(-1,1)
+        return textures
 
     def optim(self, epochs, lr, svbrdf_obj):
         tmp_dir = svbrdf_obj.optimize_dir / "tmp" / str(datetime.now())
@@ -73,12 +74,12 @@ class MaterialGANOptim(Optim):
                 which_to_optimize = "N"
 
             # compute renderings
-            self.latent_to_textures()
-            rendereds = self.renderer_obj.eval(self.textures)
+            textures = self.latent_to_textures(self.latent)
+            rendereds = self.renderer_obj.eval(textures)
 
             # compute loss
             loss = 0
-            loss_image = self.compute_image_loss(rendereds)
+            loss_image = self.compute_image_loss(rendereds) * 1000
             loss_image_list.append(loss_image.item())
             loss += loss_image
 
@@ -86,7 +87,7 @@ class MaterialGANOptim(Optim):
             # loss_lpips_list.append(loss_lpips.item())
             # loss += loss_lpips
 
-            loss_feature = self.compute_feature_loss(rendereds, which_to_optimize)
+            loss_feature = self.compute_feature_loss(rendereds, which_to_optimize) * 0.001
             loss_feature_list.append(loss_feature.item())
             loss += loss_feature
 
@@ -98,10 +99,19 @@ class MaterialGANOptim(Optim):
             self.optimizer.step()
 
             # save process
-            if (epoch + 1) % 100 == 0 or epoch == 0:
-                tmp_this_dir = tmp_dir / f"{epoch}"
+            if (epoch + 1) % 100 == 0 or epoch == 0 or epoch == (total_epochs - 1):
+                tmp_this_dir = tmp_dir / f"{epoch + 1}"
                 tmp_this_dir.mkdir(parents=True, exist_ok=True)
-                svbrdf_obj.save_textures_th(self.textures, tmp_this_dir)
+
                 self.save_loss([loss_image_list, loss_feature_list], ["image loss", "feature loss"], tmp_dir / "loss.jpg", total_epochs)
 
-        self.latent_to_textures()
+                th.save(self.latent, tmp_this_dir / "optim_latent.pt")
+                th.save(globalvar.noises, tmp_this_dir / "optim_noise.pt")
+
+                textures = self.latent_to_textures(self.latent)
+                svbrdf_obj.save_textures_th(textures, tmp_this_dir)
+
+                rendereds = self.renderer_obj.eval(textures)
+                svbrdf_obj.save_images_th(rendereds, tmp_this_dir)
+
+        self.textures = textures

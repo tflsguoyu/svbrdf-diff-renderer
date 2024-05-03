@@ -11,7 +11,7 @@ from src.microfacet import Microfacet
 from src.svbrdf import SvbrdfIO, SvbrdfOptim
 
 
-def optim_perpixel(json_dir, res, epochs, tex_init):
+def optim_perpixel(json_dir, res, lr, epochs, tex_init):
 
     device = th.device("cuda:0" if th.cuda.is_available() else "cpu")
     # device = th.device("cpu")
@@ -34,7 +34,7 @@ def optim_perpixel(json_dir, res, epochs, tex_init):
     else:
         exit()
 
-    optim_obj.optim(epochs, 0.01, svbrdf_obj)
+    optim_obj.optim(epochs, lr, svbrdf_obj)
 
     svbrdf_obj.save_textures_th(optim_obj.textures, svbrdf_obj.optimize_dir)
     rendereds = renderer_obj.eval(optim_obj.textures)
@@ -44,4 +44,4 @@ def optim_perpixel(json_dir, res, epochs, tex_init):
 if __name__ == "__main__":
     json_dir = Path("data/card_blue/optim_pixel.json")
     # json_dir = Path("data/yellow_box/optim.json")
-    optim_perpixel(json_dir, 256, 1000, tex_init="const")
+    optim_perpixel(json_dir, 256, 0.02, 1000, tex_init="const")

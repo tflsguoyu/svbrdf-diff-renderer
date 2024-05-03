@@ -30,7 +30,6 @@ def imread(filename, flag=None, dim=None):
                 print(f"[ERROR:imageio:imread:srgb] {filename} should be a 3 channel image")
                 exit()
             im = im[:, :, [2, 1, 0]]
-            im = im ** 2.2
 
         case "rough":
             if im.ndim == 3 and im.shape[2] == 3:
@@ -40,7 +39,6 @@ def imread(filename, flag=None, dim=None):
             else:
                 print(f"[ERROR:imageio:imread:rough] {filename} should be a 3 or 1 channel image")
                 exit()
-            im = im ** 2.2
 
         case "normal":
             if im.ndim != 3 or im.shape[2] != 3 :
@@ -62,11 +60,11 @@ def imwrite(im, filename, flag=None, dim=None):
 
     match flag:
         case "srgb":
-            im = im.clip(0, 1) ** (1 / 2.2)
+            im = im.clip(0, 1)
             im = im[:, :, [2, 1, 0]]
 
         case "rough":
-            im = im.clip(0, 1) ** (1 / 2.2)
+            im = im.clip(0, 1)
 
         case "normal":
             im = (im.clip(-1, 1) + 1) / 2

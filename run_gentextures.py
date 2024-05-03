@@ -19,7 +19,7 @@ def matarialgan_gen_textures(json_dir):
     svbrdf_obj = SvbrdfIO(json_dir, device)
     renderer_obj = Microfacet(256, svbrdf_obj.n_of_imgs, svbrdf_obj.im_size, svbrdf_obj.cl, device)
 
-    optim_obj = MaterialGANOptim(device, renderer_obj, "tool/materialgan.pth")
+    optim_obj = MaterialGANOptim(device, renderer_obj, "ckp/materialgan.pth")
     optim_obj.init_from_latent()
     optim_obj.latent_to_textures()
 

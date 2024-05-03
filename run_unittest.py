@@ -5,7 +5,5 @@
 from pathlib import Path
 from src.imageio import img9to1, tex4to1
 
-data_dir = Path("data/card_blue")
-
-img9to1(data_dir / "images/reference/256")
-tex4to1(data_dir / "textures/reference/256")
+img9to1(Path("data/card_blue/target/img/1024"))
+# tex4to1(Path("data/card_blue/target/tex/256"))
