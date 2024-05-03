@@ -73,14 +73,18 @@ class SvbrdfIO:
            self.optimize_dir = json_dir.parent / data["optimize_dir"]
         if "rerender_dir" in data:
            self.rerender_dir = json_dir.parent / data["rerender_dir"]
-        self.im_size = data["im_size"]
-        self.idx = data["idx"]
-        self.camera_pos = data["camera_pos"]
-        self.light_pos = data["light_pos"]
-        self.light_pow = data["light_pow"]
-        self.n_of_imgs = len(self.idx)
-
-        self.load_calibration_th()
+        if "im_size" in data:
+            self.im_size = data["im_size"]
+        if "idx" in data:
+            self.idx = data["idx"]
+            self.n_of_imgs = len(self.idx)
+        if "camera_pos" in data:
+            self.camera_pos = data["camera_pos"]
+        if "light_pos" in data:
+            self.light_pos = data["light_pos"]
+        if "light_pow" in data:
+            self.light_pow = data["light_pow"]    
+            self.load_calibration_th()
 
         print("[DONE:SvbrdfIO] Initial object")
 
@@ -128,6 +132,8 @@ class SvbrdfIO:
         diffuse = imread(textures_dir / "dif.png", "srgb")
         specular = imread(textures_dir / "spe.png", "srgb")
         roughness = imread(textures_dir / "rgh.png", "rough")
+
+        self.res = roughness.shape[0]
 
         normal_th = self.np_to_th(normal).permute(2, 0, 1).unsqueeze(0)
         diffuse_th = self.np_to_th(diffuse*2-1).permute(2, 0, 1).unsqueeze(0)

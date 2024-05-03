@@ -29,7 +29,7 @@ class Capture:
         self.crop_res = 1024
 
         self.json_dir = folder / "optim.json"
-        self.save_to_relative = f"target/img/{self.crop_res}"
+        self.save_to_relative = f"target/{self.crop_res}"
         self.save_to = folder / self.save_to_relative
 
     def eval(self, size, depth, fisheye=True):
@@ -44,23 +44,24 @@ class Capture:
         camera_pos = self.get_camera_pos(calibs[2], calibs[3])
         self.save(crops, fulls, camera_pos, size)
 
-    def save(self, ims, tmps, camera_pos, size):
+    def save(self, ims, tmps, camera_pos, size, debug=False):
         self.save_to.mkdir(parents=True, exist_ok=True)
         for i in range(self.n_of_imgs):
             imwrite(ims[i], self.save_to / f"{i:02d}.png", dim=(self.crop_res, self.crop_res))
         if self.n_of_imgs == 9:
             img9to1(self.save_to)
 
-        tmp_dir = self.save_to / "tmp"
-        tmp_dir.mkdir(parents=True, exist_ok=True)
-        for i in range(self.n_of_imgs):
-            imwrite(tmps[i], tmp_dir / f"{i:02d}.png")
+        if debug:
+            tmp_dir = self.save_to / "tmp"
+            tmp_dir.mkdir(parents=True, exist_ok=True)
+            for i in range(self.n_of_imgs):
+                imwrite(tmps[i], tmp_dir / f"{i:02d}.png")
 
         data = {
             "_comment": "in cm uint",
             "target_dir": self.save_to_relative,
-            "optimize_dir": f"optim/tex/256",
-            "rerender_dir": f"optim/img/256",
+            "optimize_dir": f"optim/256",
+            "rerender_dir": f"optim/256",
             "im_size": size / self.full_res * self.crop_res,
             "idx": list(range(self.n_of_imgs)),
             "camera_pos": camera_pos.tolist(),
