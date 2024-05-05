@@ -134,6 +134,8 @@ dmypy.json
 
 data/random/target
 data/yellow_box/target
+data/yellow_box/optim_latent
+data/yellow_box/optim_pixel
 data/yellow_box/optim.json
 data/card_blue/optim_pixel
 data/card_blue/optim_latent

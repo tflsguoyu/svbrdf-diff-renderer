@@ -10,7 +10,7 @@ class VGGLoss(th.nn.Module):
         self.criterion = th.nn.MSELoss().to(device)
 
         # get VGG19 feature network in evaluation mode
-        self.net = vgg19(True).features.to(device)
+        self.net = vgg19(weights='DEFAULT').features.to(device)
         self.net.eval()
 
         # change max pooling to average pooling
