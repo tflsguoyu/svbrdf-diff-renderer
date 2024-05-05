@@ -1,12 +1,14 @@
 import os
 import torch as th
-from torch.autograd import Variable
+
 
 def gradient(parameters, device):
     return th.autograd.Variable(parameters.to(device), requires_grad=True)
 
+
 def randn_noise(res):
     return th.randn(1, 1, res, res, dtype=th.float32)
+
 
 def init_global_noise(device, init_from="random"):
     global noises

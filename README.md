@@ -13,7 +13,7 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 [Fastforward on Siggraph Asia 2020 ([Video](https://youtu.be/fD6CTb1DlbE))([Slides](https://www.dropbox.com/s/qi594y27dqa7irf/materialgan_ff.pptx?dl=0))] \
 [Presentation on Siggraph Asia 2020 ([Video](https://youtu.be/CrAoVsJf0Zw))([Slides](https://www.dropbox.com/s/zj2mhrminoamrdg/materialgan_main.pptx?dl=0))]
 
-## Python dependencies [torch, torchvision, opencv-python, matplotlib, pupil_apriltags, lpips]
+## Python dependencies [torch, torchvision, opencv-python, matplotlib, pupil_apriltags]
 Tested on 
 1. MacOS, python3.11, pytorch2.2(CPU)
 2. Windows10, python3.11, pytorch2.3, CUDA11.8 
@@ -24,7 +24,6 @@ Download all the checkpoints to `ckp`:
 [`latent_avg_W+_256.pt`](https://www.dropbox.com/scl/fi/nf4kfoiqx6h7baxpbfu01/latent_avg_W-_256.ptrlkey=ot0yfkbgq47vt45huh65mgwit&st=724ubgqp&dl=0)
 [`latent_const_W+_256.pt`](https://www.dropbox.com/scl/fi/mdh8boshpfc6lwktrfh4i/latent_const_W-_256.pt?rlkey=gy55tp5h6c91icxhdzzbf5sss&st=hzxk2580&dl=0)
 [`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt?rlkey=ckydqxdpyvzy7kns2h0geuh4e&st=d7ytmxz5&dl=0)
-[`vgg_conv.pt`](https://www.dropbox.com/scl/fi/hp8bxxyejkw7d9a9gxxhc/vgg_conv.pt?rlkey=pbdqgh8huhdpnihwgdhn2a08v&st=r14omjo7&dl=0)
 
 ## Usage
 See `run.py` for the details

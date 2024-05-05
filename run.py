@@ -47,8 +47,8 @@ if False:
 
 # Optimize texture maps by MaterialGAN for resolution higher than 256x256
 # MaterialGAN only support 256x256, so `res` in optim_ganlatent(_, res, _, _, _, _) should always be 256
-# For higher resolution, we optimize 256x256 maps by MaterialGAN first, than use the scale 2x output as the initialization of 512x512 maps 
+# For higher resolution, we optimize 256x256 maps by MaterialGAN first, than use the scale 2x output as the initialization of 512x512 maps
 if True:
     optim_ganlatent(Path("data/card_blue/optim_latent.json"), 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])
-    optim_perpixel(Path("data/card_blue/optim_pixel_256_to_512.json"), 512, 0.01, 200, tex_init="textures")
-    optim_perpixel(Path("data/card_blue/optim_pixel_512_to_1024.json"), 1024, 0.01, 200, tex_init="textures")
+    optim_perpixel(Path("data/card_blue/optim_pixel_256_to_512.json"), 512, 0.01, 100, tex_init="textures")
+    optim_perpixel(Path("data/card_blue/optim_pixel_512_to_1024.json"), 1024, 0.01, 100, tex_init="textures")

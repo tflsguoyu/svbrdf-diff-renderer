@@ -2,10 +2,6 @@
 #
 # Copyright (c) 2023, Yu Guo. All rights reserved.
 
-import os
-
-os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"  # To write arrays in .EXR file
-
 import cv2
 import numpy as np
 
@@ -26,7 +22,7 @@ def imread(filename, flag=None, dim=None):
 
     match flag:
         case "srgb":
-            if im.ndim != 3 or im.shape[2] != 3 :
+            if im.ndim != 3 or im.shape[2] != 3:
                 print(f"[ERROR:imageio:imread:srgb] {filename} should be a 3 channel image")
                 exit()
             im = im[:, :, [2, 1, 0]]
@@ -41,7 +37,7 @@ def imread(filename, flag=None, dim=None):
                 exit()
 
         case "normal":
-            if im.ndim != 3 or im.shape[2] != 3 :
+            if im.ndim != 3 or im.shape[2] != 3:
                 print(f"[ERROR:imageio:imread:normal] {filename} should be a 3 channel image")
                 exit()
             im = im[:, :, [2, 1, 0]]
@@ -111,4 +107,3 @@ def tex4to1(folder):
 
     tex = imconcat([normal, diffuse, specular, roughness])
     imwrite(tex, folder / "tex.png")
-

@@ -5,8 +5,8 @@
 import numpy as np
 import torch as th
 
-class Microfacet:
 
+class Microfacet:
     def __init__(self, res, n, size, cl, device):
         self.res = res
         self.n_of_imgs = n
@@ -17,7 +17,7 @@ class Microfacet:
         tmp = ((tmp + 0.5) / res - 0.5) * size
         x, y = th.meshgrid(tmp, tmp, indexing='xy')
         self.pos = th.stack((x, -y, th.zeros_like(x)), 2)
-        self.pos = self.pos.permute(2, 0 ,1).unsqueeze(0).expand(n, -1, -1, -1)
+        self.pos = self.pos.permute(2, 0, 1).unsqueeze(0).expand(n, -1, -1, -1)
 
         self.camera_pos = cl[0].unsqueeze(2).unsqueeze(3).expand(-1, -1, res, res)
         self.light_pos = cl[1].unsqueeze(2).unsqueeze(3).expand(-1, -1, res, res)
@@ -41,7 +41,7 @@ class Microfacet:
         return f0 + (1 - f0) * (1 - cos)**5
 
     def Fresnel(self, cos, specular):
-        sphg = th.pow(2.0, ((-5.55473 * cos) - 6.98316) * cos);
+        sphg = th.pow(2.0, ((-5.55473 * cos) - 6.98316) * cos)
         return specular + (1.0 - specular) * sphg
 
     def Smith(self, n_dot_v, n_dot_l, alpha):
@@ -62,8 +62,8 @@ class Microfacet:
         return self.normalize(vec), self.dot(vec, vec)
 
     def reconstruct_normal(self, texture):
-        normal_x  = texture[:,0,:,:].clamp(-1 ,1)
-        normal_y  = texture[:,1,:,:].clamp(-1 ,1)
+        normal_x  = texture[:, 0, :, :].clamp(-1, 1)
+        normal_y  = texture[:, 1, :, :].clamp(-1, 1)
         normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1-self.eps)
         normal_z  = (1 - normal_xy).sqrt()  # The derivative of x.sqrt() when x=0 is nan
         normal    = th.stack((normal_x, normal_y, normal_z), 1)
@@ -106,7 +106,8 @@ class Microfacet:
         f2 = D * F * G / (4 * n_dot_v * n_dot_l + self.eps)
 
         # brdf
-        kd = 1; ks = 1
+        kd = 1
+        ks = 1
         f = kd * f1 + ks * f2
 
         # rendering

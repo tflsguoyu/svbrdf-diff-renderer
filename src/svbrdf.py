@@ -13,7 +13,6 @@ from .optimization import Optim
 
 
 class SvbrdfOptim(Optim):
-
     def __init__(self, device, renderer_obj):
         super().__init__(device, renderer_obj)
 
@@ -38,12 +37,15 @@ class SvbrdfOptim(Optim):
         textures = th.cat((diffuse_th, normal_th, roughness_th, specular_th), 1)
         self.textures = self.gradient(textures)
 
+    def load_targets(self, targets):
+        self.targets = targets
+
     def optim(self, epochs, lr, svbrdf_obj):
         tmp_dir = svbrdf_obj.optimize_dir / "tmp" / str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
         tmp_dir.mkdir(parents=True, exist_ok=True)
 
         self.optimizer = th.optim.Adam([self.textures], lr=lr, betas=(0.9, 0.999))
-        
+
         loss_image_list = []
         pbar = tqdm.trange(epochs)
         for epoch in pbar:
@@ -53,6 +55,7 @@ class SvbrdfOptim(Optim):
             # compute loss
             loss = self.compute_image_loss(rendereds)
             loss_image_list.append(loss.item())
+
             pbar.set_postfix({"Loss": loss.item()})
 
             # optimize
@@ -74,7 +77,6 @@ class SvbrdfOptim(Optim):
 
 
 class SvbrdfIO:
-
     def __init__(self, json_dir, device):
         self.device = device
 
@@ -86,13 +88,13 @@ class SvbrdfIO:
             data = json.load(f)
 
         if "reference_dir" in data:
-            self.reference_dir = json_dir.parent / data["reference_dir"] 
+            self.reference_dir = json_dir.parent / data["reference_dir"]
         if "target_dir" in data:
-           self.target_dir = json_dir.parent / data["target_dir"]
+            self.target_dir = json_dir.parent / data["target_dir"]
         if "optimize_dir" in data:
-           self.optimize_dir = json_dir.parent / data["optimize_dir"]
+            self.optimize_dir = json_dir.parent / data["optimize_dir"]
         if "rerender_dir" in data:
-           self.rerender_dir = json_dir.parent / data["rerender_dir"]
+            self.rerender_dir = json_dir.parent / data["rerender_dir"]
         if "im_size" in data:
             self.im_size = data["im_size"]
         if "idx" in data:
@@ -103,28 +105,24 @@ class SvbrdfIO:
         if "light_pos" in data:
             self.light_pos = data["light_pos"]
         if "light_pow" in data:
-            self.light_pow = data["light_pow"]    
+            self.light_pow = data["light_pow"]
             self.load_calibration_th()
 
         print("[DONE:SvbrdfIO] Initial object")
 
-
     def np_to_th(self, arr):
         return th.from_numpy(arr).to(self.device)
-
 
     def th_to_np(self, arr):
         return arr.detach().cpu().numpy()
 
-
     def reconstruct_normal(self, texture):
-        normal_x  = texture[:,0,:,:].clamp(-1 ,1)
-        normal_y  = texture[:,1,:,:].clamp(-1 ,1)
+        normal_x  = texture[:, 0, :, :].clamp(-1, 1)
+        normal_y  = texture[:, 1, :, :].clamp(-1, 1)
         normal_xy = (normal_x**2 + normal_y**2).clamp(0, 1)
         normal_z  = (1 - normal_xy).sqrt()
         normal    = th.stack((normal_x, normal_y, normal_z), 1)
         return normal / (normal.norm(2.0, 1, keepdim=True))
-
 
     def load_calibration_th(self):
         camera_pos = np.array(self.camera_pos, "float32")
@@ -141,7 +139,6 @@ class SvbrdfIO:
         self.cl = [camera_pos_th, light_pos_th, light_pow_th]
 
         print("[DONE:SvbrdfIO] Load parameters")
-
 
     def load_textures_th(self, textures_dir, res):
         if not textures_dir.exists:
@@ -160,7 +157,6 @@ class SvbrdfIO:
 
         print("[DONE:SvbrdfIO] Load textures (numbers in range [-1,1])")
         return th.cat((diffuse_th, normal_th[:, :2, :, :], roughness_th, specular_th), 1)
-
 
     def save_textures_th(self, textures_th, textures_dir):
         textures_dir.mkdir(parents=True, exist_ok=True)
@@ -185,7 +181,6 @@ class SvbrdfIO:
 
         print("[DONE:SvbrdfIO] Save textures")
 
-
     def load_images_th(self, images_dir, res=256):
         if not images_dir.exists:
             print(f"[ERROR:SvbrdfIO:load_images_th] {images_dir} is not exists")
@@ -196,17 +191,16 @@ class SvbrdfIO:
         for i, idx in enumerate(self.idx):
             fn_image = images_dir / f"{idx:02d}.png"
             image = imread(fn_image, "srgb", (res, res))
-            images_th[i,:,:,:] = self.np_to_th(image).permute(2, 0, 1)
+            images_th[i, :, :, :] = self.np_to_th(image).permute(2, 0, 1)
 
         print("[DONE:SvbrdfIO] Load images")
         return images_th
-
 
     def save_images_th(self, images_th, images_dir):
         images_dir.mkdir(parents=True, exist_ok=True)
 
         if images_th.shape[0] != self.n_of_imgs:
-            print(f"[ERROR:SvbrdfIO:save_images_th]")
+            print("[ERROR:SvbrdfIO:save_images_th]")
             exit()
 
         for i, idx in enumerate(self.idx):
@@ -218,4 +212,3 @@ class SvbrdfIO:
             img9to1(images_dir)
 
         print("[DONE:SvbrdfIO] Save images")
-

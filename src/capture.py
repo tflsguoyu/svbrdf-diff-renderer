@@ -6,13 +6,13 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-from pupil_apriltags import Detector # https://github.com/pupil-labs/apriltags
+from pupil_apriltags import Detector  # https://github.com/pupil-labs/apriltags
 from .imageio import imread, imwrite, img9to1
 
 np.set_printoptions(precision=4, suppress=True)
 
-class Capture:
 
+class Capture:
     def __init__(self, folder):
         self.detector = Detector()
 
@@ -60,8 +60,8 @@ class Capture:
         data = {
             "_comment": "in cm uint",
             "target_dir": self.save_to_relative,
-            "optimize_dir": f"optim/256",
-            "rerender_dir": f"optim/256",
+            "optimize_dir": "optim/256",
+            "rerender_dir": "optim/256",
             "im_size": size / self.full_res * self.crop_res,
             "idx": list(range(self.n_of_imgs)),
             "camera_pos": camera_pos.tolist(),
@@ -80,7 +80,7 @@ class Capture:
             point3d = point3d_list[i]
             # material plane is lower than markers plane
             # Warning: point3d[:, 2] -= d is incorrect here
-            point3d[:, 2] = -d  
+            point3d[:, 2] = -d
             point2d = point2d_list[i]
 
             src_points, _ = cv2.projectPoints(
@@ -149,7 +149,7 @@ class Capture:
         centers = []
         corners = []
         for marker in results:
-            if marker.tag_id >= 0 and marker.tag_id <= 15: # we use markers tag36h11 from 0 to 15
+            if marker.tag_id >= 0 and marker.tag_id <= 15:  # we use markers tag36h11 from 0 to 15
                 tag_id.append(marker.tag_id)
                 centers.append(marker.center)
                 corners.append(marker.corners)
@@ -176,10 +176,10 @@ class Capture:
         centers = centers[idx, :]
         corners = []
         for i in range(centers.shape[0]):
-            corners.append(centers[i, :] + np.array([-1,-1, 0]))
-            corners.append(centers[i, :] + np.array([ 1,-1, 0]))
-            corners.append(centers[i, :] + np.array([ 1, 1, 0]))
-            corners.append(centers[i, :] + np.array([-1, 1, 0]))
+            corners.append(centers[i, :] + np.array([-1, -1, 0]))
+            corners.append(centers[i, :] + np.array([ 1, -1, 0]))
+            corners.append(centers[i, :] + np.array([ 1,  1, 0]))
+            corners.append(centers[i, :] + np.array([-1,  1, 0]))
 
         corners = np.vstack(corners).astype('float32')
         corners = corners * size / (4*n-2)
@@ -195,10 +195,10 @@ class Capture:
         for i in range(int(corners.shape[0]/4)):
             if centers is not None:
                 plt.plot(centers[i, 0], centers[i, 1], 'm.')
-            a = corners[i*4+0,:2]
-            b = corners[i*4+1,:2]
-            c = corners[i*4+2,:2]
-            d = corners[i*4+3,:2]
+            a = corners[i*4+0, :2]
+            b = corners[i*4+1, :2]
+            c = corners[i*4+2, :2]
+            d = corners[i*4+3, :2]
             plt.plot([a[0], b[0]], [a[1], b[1]], 'r')
             plt.plot([b[0], c[0]], [b[1], c[1]], 'g')
             plt.plot([c[0], d[0]], [c[1], d[1]], 'b')

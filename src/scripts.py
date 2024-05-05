@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2023, Yu Guo. All rights reserved.
+# Copyright (c) 2024, Yu Guo. All rights reserved.
 
-from pathlib import Path
 import torch as th
 
 from .capture import Capture
@@ -93,4 +92,3 @@ def optim_ganlatent(json_dir, res, lr, epochs, tex_init):
     svbrdf_obj.save_textures_th(optim_obj.textures, svbrdf_obj.optimize_dir)
     rendereds = renderer_obj.eval(optim_obj.textures)
     svbrdf_obj.save_images_th(rendereds, svbrdf_obj.rerender_dir)
-    
