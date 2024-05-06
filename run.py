@@ -40,9 +40,9 @@ if False:
 # Optimize texture maps by MaterialGAN for resolution 256x256
 if False:
     # Different initialization
-    # ckp = []
-    # ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]
-    ckp = ["ckp/latent_avg_W+_256.pt"]
+    # ckp = []  # random latent and noise
+    # ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]  # embeded latent and noise for constant maps (lower roughness)
+    ckp = ["ckp/latent_avg_W+_256.pt"]  # average latent and zero noise
 
     optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ckp)
 

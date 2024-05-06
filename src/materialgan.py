@@ -48,6 +48,8 @@ class MaterialGANOptim(Optim):
         # return gloval var "noises"
         if len(ckp) == 2:
             init_global_noise(self.device, init_from=ckp[1])
+        elif len(ckp) == 1:
+            init_global_noise(self.device, init_from="avg")
         else:
             init_global_noise(self.device, init_from="random")
 

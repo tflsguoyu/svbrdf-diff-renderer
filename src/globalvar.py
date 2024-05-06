@@ -6,16 +6,34 @@ def gradient(parameters, device):
     return th.autograd.Variable(parameters.to(device), requires_grad=True)
 
 
+def zero_noise(res):
+    return th.zeros(1, 1, res, res, dtype=th.float32)
+
+
 def randn_noise(res):
     return th.randn(1, 1, res, res, dtype=th.float32)
 
 
-def init_global_noise(device, init_from="random"):
+def init_global_noise(device, init_from="avg"):
     global noises
     global noise_idx
     noise_idx = 0
 
-    if init_from == 'random':
+    if init_from == "avg":
+        noise_4_1 = zero_noise(4)
+        noise_8_1 = zero_noise(8)
+        noise_8_2 = zero_noise(8)
+        noise_16_1 = zero_noise(16)
+        noise_16_2 = zero_noise(16)
+        noise_32_1 = zero_noise(32)
+        noise_32_2 = zero_noise(32)
+        noise_64_1 = zero_noise(64)
+        noise_64_2 = zero_noise(64)
+        noise_128_1 = zero_noise(128)
+        noise_128_2 = zero_noise(128)
+        noise_256_1 = zero_noise(256)
+        noise_256_2 = zero_noise(256)
+    elif init_from == 'random':
         noise_4_1 = randn_noise(4)
         noise_8_1 = randn_noise(8)
         noise_8_2 = randn_noise(8)
