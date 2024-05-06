@@ -26,17 +26,20 @@ Download all the checkpoints to the folder `ckp`:
 [`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt?rlkey=ckydqxdpyvzy7kns2h0geuh4e&st=d7ytmxz5&dl=0)
 
 ## Usage
-See `run.py` for the details.
+To optimize SVBRDF maps, we need several images with different lighting and a corresponding JSON file, which has all the information included. 
+If you use our dataset, all the JSON files are provided. If you want to capture new data, see below instruction. The JSON file will be generated automatically.
+
+See `run.py` for more details. 
 
 ## Capture your own data with a smartphone
 1. Print "fig/tag36h11_print.png" on a solid paper with proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red arrow line in the below figure.
 3. Place it on the material you want to capture and make the paper as flat as possible.
 4. Turn on the camera flashlight and capture images from different views.
-5. Create a data folder, e.g. `data/yellow_box`, and copy captured images to `data/yellow_box/raw`.
-6. Run script. 
-The `size` here in `input_obj.eval(size=17, depth=0.1)` is the number you measured from step 2. `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
-7. The generated target images are located in `data/yellow_box/target/1024` and the corresponding `data/yellow_box/optim.json` file is generated as well.
+5. Create a data folder for captured images. We provide an example here, `data/yellow_box-17.0-0.1/raw`.
+6. Run `gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)` in `run.py`.
+The `size` here is the number you measured from step 2; `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
+7. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
 <img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
 
 Tips:
@@ -48,7 +51,10 @@ Tips:
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
 ## The real data we used in the paper [[Download](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
-The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code `run.py`.
+The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
+- `optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])`
+- `optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")`
+- `optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")`
 
 For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization, as shown below.
 
@@ -103,3 +109,5 @@ For some specular materials, you can see the highlights are bakes in the roughne
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/target/all.jpg" width="150px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/optim_latent_const/256/tex.jpg" width="150px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/optim_latent_const/1024/tex.jpg" width="150px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/target/all.jpg" width="150px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent_const/256/tex.jpg" width="150px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent_const/1024/tex.jpg" width="150px">
 
 Notes, the high-res output uses MaterialGAN output as the initial but only has pixel loss constrain during the optimization. Although more details are recovered, sometimes it will overfit. See the above example.
+
+We will provide more data in the future.
