@@ -36,9 +36,9 @@ def render(json_dir, res):
     svbrdf_obj.save_images_th(rendereds, svbrdf_obj.target_dir)
 
 
-def gen_targets_from_capture(data_dir):
+def gen_targets_from_capture(data_dir, size=17.0, depth=0.1):
     input_obj = Capture(data_dir)
-    input_obj.eval(size=17.0, depth=0.1)
+    input_obj.eval(size, depth)
 
 
 def optim_perpixel(json_dir, res, lr, epochs, tex_init):

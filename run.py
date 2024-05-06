@@ -25,11 +25,11 @@ if False:
 
 
 # --------------------- Example (data/yellow_box) ----------------------
-material_dir = Path("data/yellow_box")
+material_dir = Path("data/yellow_box-17.0-0.1")
 
 # Capture your own data
 if False:
-    gen_targets_from_capture(material_dir)
+    gen_targets_from_capture(material_dir, size=17.0, depth=0.1)
 
 
 # Optimize texture maps directly on pixels, baseline method
