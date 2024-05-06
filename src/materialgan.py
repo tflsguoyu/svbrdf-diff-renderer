@@ -72,7 +72,7 @@ class MaterialGANOptim(Optim):
         # Option 2:
         textures = textures_tmp.clone()
         textures[:, 0:5, :, :] = textures_tmp[:, 0:5, :, :].clamp(-1, 1)
-        textures[:,   5, :, :] = textures_tmp[:,   5, :, :].clamp(-0.3, 1)
+        textures[:,   5, :, :] = textures_tmp[:,   5, :, :].clamp(-0.5, 0.5)
         textures[:, 6:9, :, :] = textures_tmp[:, 6:9, :, :].clamp(-1, 1)
         return textures
 
@@ -103,11 +103,11 @@ class MaterialGANOptim(Optim):
 
             # compute loss
             loss = 0
-            loss_image = self.compute_image_loss(rendereds) * 10
+            loss_image = self.compute_image_loss(rendereds)
             loss_image_list.append(loss_image.item())
             loss += loss_image
 
-            loss_feature = self.compute_feature_loss(rendereds, which_to_optimize)
+            loss_feature = self.compute_feature_loss(rendereds, which_to_optimize) * 0.1
             loss_feature_list.append(loss_feature.item())
             loss += loss_feature
 

@@ -47,3 +47,5 @@ Tips:
 5. `.HEIC` image format is not supported now. Convert it to `.PNG` first. 
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
+## The real data we used in the paper [[Download](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
+
