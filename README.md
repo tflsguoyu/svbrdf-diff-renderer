@@ -28,31 +28,31 @@ Download all the checkpoints to the folder `ckp`:
 ## Usage
 See `run.py` for the details.
 
-## Capture your own data with smartphone
-1. Print "fig/tag36h11_print.png" on a solid paper with a proper size and crop the center area.
-2. Measure `size`(in cm unit) with a ruler, see the red arrow line in below figure.
-3. Place it on the material you want to capture, and make the paper as flat as possible.
-4. Turn on camera flashlight and capture images from different views.
-5. Create a data folder, e.g `data/yellow_box`, and copy captured images to `data/yellow_box/raw`.
+## Capture your own data with a smartphone
+1. Print "fig/tag36h11_print.png" on a solid paper with proper size and crop the center area.
+2. Measure `size`(in cm unit) with a ruler, see the red arrow line in the below figure.
+3. Place it on the material you want to capture and make the paper as flat as possible.
+4. Turn on the camera flashlight and capture images from different views.
+5. Create a data folder, e.g. `data/yellow_box`, and copy captured images to `data/yellow_box/raw`.
 6. Run script. 
-The `size` here in `input_obj.eval(size=17, depth=0.1)` is the number you measured from step 2. `depth` is distance (in cm unit) between marker plane and material plane. For example, if you attach the markers on a thick cardboard, you should use a larger `depth`.
-7. The generate target images is located in `data/yellow_box/target/1024` and corresponding `data/yellow_box/optim.json` file is generated as well.
+The `size` here in `input_obj.eval(size=17, depth=0.1)` is the number you measured from step 2. `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
+7. The generated target images are located in `data/yellow_box/target/1024` and the corresponding `data/yellow_box/optim.json` file is generated as well.
 <img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
 
 Tips:
 1. All markers should be captured and in focus and the letter `A` should be facing up.
 2. It's better to capture during the night or in a dark room and turn off other lights.
 3. It's better to see the highlights in the cropped area.
-4. Change camera mode to manual, keep white balance and focal lenth the same during the captures.
+4. Change camera mode to manual, and keep the white balance and focal length the same during the captures.
 5. `.heic` image format is not supported now. Convert it to `.png`/`.jpg` first. 
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
 ## The real data we used in the paper [[Download](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
-The dataset includes corresponding json files. We put our results here as reference, and you can also generate the results using our codes `run.py`.
+The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code `run.py`.
 
-In general, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization, as shown below.
+For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization, as shown below.
 
-From left to right: input photos, output texture maps (256x256) from materialgan, output high res maps (1024x1024).
+From left to right: input photos, output texture maps (256x256) from MaterialGAN, output high-res maps (1024x1024) from per-pixel optimization.
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/tex.jpg" width="120px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/1024/tex.jpg" width="120px">
 
@@ -94,3 +94,12 @@ From left to right: input photos, output texture maps (256x256) from materialgan
 
 <!-- <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/1024/tex.jpg" width="120px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/1024/tex.jpg" width="120px"> -->
 
+For some specular materials, you can see the highlights are bakes in the roughness maps. You could try different initialization like `ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]`, which use lower roughness as initial. See the results below, which converged to better results.
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent_const/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent_const/1024/tex.jpg" width="120px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent_const/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent_const/1024/tex.jpg" width="120px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent_const/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent_const/1024/tex.jpg" width="120px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent_const/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent_const/1024/tex.jpg" width="120px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent_const/256/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent_const/1024/tex.jpg" width="120px">
+
+Notes, the high-res output uses MaterialGAN output as the initial but only has pixel loss constrain during the optimization. Although more details are recovered, sometimes it will overfit. See the above example.
