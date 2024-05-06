@@ -50,8 +50,9 @@ Tips:
 ## The real data we used in the paper [[Download](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
 The dataset includes corresponding json files. We put our results here as reference, you can also generate the results using our codes `run.py`.
 
-From left to right: input photos, output texture maps, re-rendered image
+From left to right: input photos, output texture maps, re-rendered images
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/optim_latent/1024/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/optim_latent/1024/all.jpg" width="120px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/all.jpg" width="120px">
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/target/all.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/1024/tex.jpg" width="120px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/1024/all.jpg" width="120px">
 
