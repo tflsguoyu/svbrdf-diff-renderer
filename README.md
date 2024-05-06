@@ -19,7 +19,7 @@ Tested on
 2. Windows10, python3.11, pytorch2.3, CUDA11.8 
 
 ## Pretrained MaterialGAN model
-Download all the checkpoints to `ckp`: 
+Download all the checkpoints to the folder `ckp`: 
 [`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth?rlkey=ykovb3owafmz6icvss13sdddl&dl=0)
 [`latent_avg_W+_256.pt`](https://www.dropbox.com/scl/fi/nf4kfoiqx6h7baxpbfu01/latent_avg_W-_256.ptrlkey=ot0yfkbgq47vt45huh65mgwit&st=724ubgqp&dl=0)
 [`latent_const_W+_256.pt`](https://www.dropbox.com/scl/fi/mdh8boshpfc6lwktrfh4i/latent_const_W-_256.pt?rlkey=gy55tp5h6c91icxhdzzbf5sss&st=hzxk2580&dl=0)
@@ -44,7 +44,7 @@ Tips:
 2. It's better to capture during the night or in a dark room and turn off other lights.
 3. It's better to see the highlights in the cropped area.
 4. Change camera mode to manual, keep white balance and focal lenth the same during the captures.
-5. `.HEIC` image format is not supported now. Convert it to `.PNG` first. 
+5. `.heic` image format is not supported now. Convert it to `.png`/`.jpg` first. 
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
 ## The real data we used in the paper [[Download](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
