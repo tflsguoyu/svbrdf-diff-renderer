@@ -26,7 +26,7 @@ Download all the checkpoints to `ckp`:
 [`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt?rlkey=ckydqxdpyvzy7kns2h0geuh4e&st=d7ytmxz5&dl=0)
 
 ## Usage
-See `run.py` for the details
+See `run.py` for the details.
 
 ## Capture your own data with smartphone
 1. Print "fig/tag36h11_print.png" on a solid paper with a proper size and crop the center area.
@@ -48,7 +48,7 @@ Tips:
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
 ## The real data we used in the paper [[Download](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
-The dataset includes corresponding json files. We put our results here as reference, you can also generate the results using our codes `run.py`.
+The dataset includes corresponding json files. We put our results here as reference, and you can also generate the results using our codes `run.py`.
 
 From left to right: input photos, output texture maps, re-rendered images
 
