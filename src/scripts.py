@@ -2,12 +2,16 @@
 #
 # Copyright (c) 2024, Yu Guo. All rights reserved.
 
+import os
+import numpy as np
 import torch as th
 
 from .capture import Capture
 from .materialgan import MaterialGANOptim
 from .microfacet import Microfacet
 from .svbrdf import SvbrdfIO, SvbrdfOptim
+from .render import MitsubaRender
+from .imageio import imwrite, img2gif
 
 
 def gen_textures_from_materialgan(json_dir):
@@ -34,6 +38,23 @@ def render(json_dir, res):
     rendereds = render_obj.eval(textures)
 
     svbrdf_obj.save_images_th(rendereds, svbrdf_obj.target_dir)
+
+
+def render_envmap(data_dir, res):
+    vid_dir = data_dir / "vid"
+    vid_dir.mkdir(parents=True, exist_ok=True)
+
+    render_obj = MitsubaRender([res, res], "fig/ennis.exr", str(data_dir))
+    angle_range_all = (-np.cos(np.linspace(0, np.pi, 59))) * 40
+
+    for i, angle in enumerate(angle_range_all):
+        im = render_obj.render(angle)
+        imwrite(im, vid_dir / f"{i:03d}.png", flag="srgb")
+
+    for j, ii in enumerate(range(i-1, 0, -1)):
+        os.system(f'cp {str(vid_dir / f"{ii:03d}.png")} {str(vid_dir / f"{i+j+1:03d}.png")}')
+
+    img2gif(vid_dir / "*.png", data_dir / "vid.gif")
 
 
 def gen_targets_from_capture(data_dir, size=17.0, depth=0.1):

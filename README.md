@@ -13,8 +13,10 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 [Fastforward on Siggraph Asia 2020 ([Video](https://youtu.be/fD6CTb1DlbE))([Slides](https://www.dropbox.com/s/qi594y27dqa7irf/materialgan_ff.pptx?dl=0))] \
 [Presentation on Siggraph Asia 2020 ([Video](https://youtu.be/CrAoVsJf0Zw))([Slides](https://www.dropbox.com/s/zj2mhrminoamrdg/materialgan_main.pptx?dl=0))]
 
-## Python dependencies [torch, torchvision, opencv-python, matplotlib, pupil_apriltags]
-Tested on 
+## Python dependencies 
+`torch`, `torchvision`, `opencv-python`, `matplotlib`, `pupil_apriltags`(for data capture), `mitsuba`(for envmap rendering)
+
+Tested on, 
 1. MacOS, python3.11, pytorch2.2(CPU)
 2. Windows10, python3.11, pytorch2.3, CUDA11.8 
 

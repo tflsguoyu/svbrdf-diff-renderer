@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2023, Yu Guo. All rights reserved.
 
+import os
 import cv2
 import numpy as np
 
@@ -107,3 +108,8 @@ def tex4to1(folder):
 
     tex = imconcat([normal, diffuse, specular, roughness])
     imwrite(tex, folder / "tex.png")
+
+
+def img2gif(in_filenames, out_filename):
+    cmd = f"convert -delay 4 -loop 0 {str(in_filenames)} {str(out_filename)}"
+    os.system(cmd)

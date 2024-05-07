@@ -4,7 +4,7 @@
 
 from pathlib import Path
 from src.imageio import img9to1, tex4to1
-from src.scripts import render
+from src.scripts import render, render_envmap
 from src.scripts import gen_textures_from_materialgan, gen_targets_from_capture
 from src.scripts import optim_perpixel, optim_ganlatent
 
@@ -54,3 +54,8 @@ if True:
     optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])
     optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")
     optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")
+
+
+if False:
+    render_envmap(material_dir / "optim_latent/256", 256)
+    # render_envmap(material_dir / "optim_latent/1024", 1024)
