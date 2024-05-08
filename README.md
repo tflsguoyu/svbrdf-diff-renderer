@@ -12,6 +12,9 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 [[Poster](https://github.com/tflsguoyu/materialgan_poster/blob/master/materialgan_poster.pdf)]
 [Fastforward on Siggraph Asia 2020 ([Video](https://youtu.be/fD6CTb1DlbE))([Slides](https://www.dropbox.com/s/qi594y27dqa7irf/materialgan_ff.pptx?dl=0))] \
 [Presentation on Siggraph Asia 2020 ([Video](https://youtu.be/CrAoVsJf0Zw))([Slides](https://www.dropbox.com/s/zj2mhrminoamrdg/materialgan_main.pptx?dl=0))]
+[[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
+[[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)]
+
 
 ## Python dependencies 
 `torch`, `torchvision`, `opencv-python`, `matplotlib`, `pupil_apriltags`(for data capture), `mitsuba`(for envmap rendering)
@@ -52,7 +55,7 @@ Tips:
 5. `.heic` image format is not supported now. Convert it to `.png`/`.jpg` first. 
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
-## The real data we used in the paper [[Download](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
+## The real [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] we used in this paper 
 The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
 - `optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])`
 - `optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")`
@@ -102,7 +105,7 @@ From left to right: input photos, output texture maps (256x256) from MaterialGAN
 
 <!-- <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/1024/tex.jpg" width="130px"> -->
 
-For some specular materials, you can see the highlights are bakes in the roughness maps. You could try different initialization like `ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]`, which use lower roughness as initial. See the results below, which converged to better results.
+For some specular materials, you can see the highlights are baked in the roughness maps. You could try different initialization like `ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]`, which use lower roughness as initial. See the results below, which converged to better results.
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent_const/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent_const/1024/tex.jpg" width="130px">
 
@@ -113,3 +116,5 @@ For some specular materials, you can see the highlights are bakes in the roughne
 Notes, the high-res output uses MaterialGAN output as the initial but only has pixel loss constrain during the optimization. Although more details are recovered, sometimes it will overfit. See the above example.
 
 We will provide more data in the future.
+
+## [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
