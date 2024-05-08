@@ -141,6 +141,7 @@ We also provide the code in `run.py` to generate novel-view renderings with an e
 ```bash
 render_envmap(material_dir / "optim_latent/1024", 1024)
 ```
+([ImageMagick](https://imagemagick.org/) is needed!)
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/vid.gif" width="130px">
 
