@@ -50,9 +50,12 @@ Steps:
 3. Place it on the material you want to capture and make the paper as flat as possible.
 4. Turn on the camera flashlight and capture images from different views.
 5. Create a data folder for captured images. We provide an example here, `data/yellow_box-17.0-0.1/raw`.
-6. Run `gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)` in `run.py`.
+6. Run the script in `run.py`.
+   ```bash
+   gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)
+   ```
 The `size` here is the number you measured from step 2; `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
-7. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
+8. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
 
 Tips:
 1. All markers should be captured and in focus and the letter `A` should be facing up.
@@ -66,11 +69,14 @@ Tips:
   
 ## 2. The [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] we used in this paper 
 The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
-- `optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])`
-- `optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")`
-- `optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")`
 
-For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization, as shown below.
+```bash
+optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])
+optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")
+optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")
+```
+
+For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization. The results are shown below.
 
 From left to right: input photos, output texture maps (256x256) from MaterialGAN, output high-res maps (1024x1024) from per-pixel optimization.
 
