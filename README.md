@@ -152,3 +152,23 @@ render_envmap(material_dir / "optim_latent/1024", 1024)
 
 </detail>
 </details>
+
+# Citation
+
+If you find this work useful for your research, please cite:
+
+```
+@article{Guo:2020:MaterialGAN,
+  title={MaterialGAN: Reflectance Capture using a Generative SVBRDF Model},
+  author={Guo, Yu and Smith, Cameron and Ha\v{s}an, Milo\v{s} and Sunkavalli, Kalyan and Zhao, Shuang},
+  journal={ACM Trans. Graph.},
+  volume={39},
+  number={6},
+  year={2020},
+  pages={254:1--254:13}
+}
+```
+
+# Contacts
+
+Welcome to report bugs and leave comments (Yu Guo: tflsguoyu@gmail.com)
