@@ -4,7 +4,7 @@
 
 In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/github/teaser.jpg" width="1000px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/github/teaser.jpg" width="800px">
 
 [[Paper](https://github.com/tflsguoyu/materialgan_paper/blob/master/materialgan.pdf)]
 [[Code](https://github.com/tflsguoyu/svbrdf-diff-renderer)]
