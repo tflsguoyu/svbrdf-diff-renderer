@@ -134,8 +134,21 @@ For some specular materials, you can see the highlights are baked in the roughne
 
 Notes, the high-res output uses MaterialGAN output as the initial but only has pixel loss constrain during the optimization. Although more details are recovered, sometimes it will overfit. See the above example.
 
-We will provide more data in the future.
-
 </details>
 
+We also provide the code in `run.py` to generate novel-view renderings with an environment map,
+
+```bash
+render_envmap(material_dir / "optim_latent/1024", 1024)
+```
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/vid.gif" width="130px">
+
 ## 3. The [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
+
+<details>
+
+<summary>Click to see more results</summary>
+
+</detail>
+</details>
