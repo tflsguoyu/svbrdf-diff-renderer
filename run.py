@@ -56,6 +56,7 @@ if True:
     optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")
 
 
+# Generate novel views with environment map
 if False:
     render_envmap(material_dir / "optim_latent/256", 256)
     # render_envmap(material_dir / "optim_latent/1024", 1024)
