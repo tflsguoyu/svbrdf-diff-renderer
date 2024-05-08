@@ -15,28 +15,36 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
 [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)]
 
-
-## Python dependencies 
+# Quick start
+## 1. Python dependencies 
 `torch`, `torchvision`, `opencv-python`, `matplotlib`, `pupil_apriltags`(for data capture), `mitsuba`(for envmap rendering)
 
 Tested on, 
 1. MacOS, python3.11, pytorch2.2(CPU)
 2. Windows10, python3.11, pytorch2.3, CUDA11.8 
 
-## Pretrained MaterialGAN model
+## 2. Pretrained MaterialGAN model
 Download all the checkpoints to the folder `ckp`: 
 [`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth?rlkey=ykovb3owafmz6icvss13sdddl&dl=0)
 [`latent_avg_W+_256.pt`](https://www.dropbox.com/scl/fi/nf4kfoiqx6h7baxpbfu01/latent_avg_W-_256.ptrlkey=ot0yfkbgq47vt45huh65mgwit&st=724ubgqp&dl=0)
 [`latent_const_W+_256.pt`](https://www.dropbox.com/scl/fi/mdh8boshpfc6lwktrfh4i/latent_const_W-_256.pt?rlkey=gy55tp5h6c91icxhdzzbf5sss&st=hzxk2580&dl=0)
 [`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt?rlkey=ckydqxdpyvzy7kns2h0geuh4e&st=d7ytmxz5&dl=0)
 
-## Usage
+## 3. Usage
 To optimize SVBRDF maps, we need several images with different lighting and a corresponding JSON file, which has all the information included. 
 If you use our dataset, all the JSON files are provided. If you want to capture new data, see below instruction. The JSON file will be generated automatically.
 
 See `run.py` for more details. 
 
-## Capture your own data with a smartphone
+# Real captured Dataset
+## 1. Capture your own data with a smartphone
+<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
+
+<details>
+  
+<summary>Click to see more details</summary>
+
+Steps:
 1. Print "fig/tag36h11_print.png" on a solid paper with proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red arrow line in the below figure.
 3. Place it on the material you want to capture and make the paper as flat as possible.
@@ -45,7 +53,6 @@ See `run.py` for more details.
 6. Run `gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)` in `run.py`.
 The `size` here is the number you measured from step 2; `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
 7. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
-<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
 
 Tips:
 1. All markers should be captured and in focus and the letter `A` should be facing up.
@@ -55,7 +62,9 @@ Tips:
 5. `.heic` image format is not supported now. Convert it to `.png`/`.jpg` first. 
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
-## The real [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] we used in this paper 
+</details>
+  
+## 2. The [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] we used in this paper 
 The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
 - `optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])`
 - `optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")`
@@ -71,6 +80,10 @@ From left to right: input photos, output texture maps (256x256) from MaterialGAN
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/1024/tex.jpg" width="130px">
 
+<details>
+  
+<summary>Click to see more results</summary>
+  
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/optim_latent/1024/tex.jpg" width="130px">
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/optim_latent/1024/tex.jpg" width="130px">
@@ -117,4 +130,6 @@ Notes, the high-res output uses MaterialGAN output as the initial but only has p
 
 We will provide more data in the future.
 
-## [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
+</details>
+
+## 3. The [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
