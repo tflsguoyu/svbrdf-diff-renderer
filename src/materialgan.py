@@ -121,7 +121,7 @@ class MaterialGANOptim(Optim):
             self.optimizer.step()
 
             # save process
-            if (epoch + 1) % 100 == 0 or epoch == 0 or epoch == (total_epochs - 1):
+            if (epoch + 1) % 200 == 0 or epoch == 0 or epoch == (total_epochs - 1):
                 tmp_this_dir = tmp_dir / f"{epoch + 1}"
                 tmp_this_dir.mkdir(parents=True, exist_ok=True)
 
@@ -137,3 +137,5 @@ class MaterialGANOptim(Optim):
                 svbrdf_obj.save_images_th(rendereds, tmp_this_dir)
 
         self.textures = textures
+        self.loss = loss.item()
+        self.loss_image = loss_image.item()

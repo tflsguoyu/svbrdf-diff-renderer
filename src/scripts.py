@@ -106,8 +106,22 @@ def optim_ganlatent(json_dir, res, lr, epochs, tex_init):
     optim_obj = MaterialGANOptim(device, renderer_obj, ckp="ckp/materialgan.pth")
     optim_obj.load_targets(targets)
 
-    optim_obj.init_from(tex_init)
-
+    if tex_init == "auto":
+        optim_obj.init_from(["ckp/latent_avg_W+_256.pt"])
+        optim_obj.optim([80,10,10], lr, svbrdf_obj)
+        loss_dif = optim_obj.loss_image
+        optim_obj.init_from(["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"])
+        optim_obj.optim([80,10,10], lr, svbrdf_obj)
+        loss_spe = optim_obj.loss_image
+        if loss_dif < loss_spe:
+            print("Non-specular material!")
+            optim_obj.init_from(["ckp/latent_avg_W+_256.pt"])
+        else:
+            print("Specular material!")
+            optim_obj.init_from(["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"])
+    else:
+        optim_obj.init_from(tex_init)
+    
     optim_obj.optim(epochs, lr, svbrdf_obj)
 
     svbrdf_obj.save_textures_th(optim_obj.textures, svbrdf_obj.optimize_dir)
