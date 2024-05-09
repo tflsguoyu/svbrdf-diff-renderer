@@ -33,7 +33,7 @@ class MitsubaRender:
                 'type': 'perspective',
                 'fov': 50,
                 'to_world': T.look_at(
-                    target=[0, 0.01, 0],
+                    target=[0, 0, 0],
                     origin=[0, 0, 1],
                     up=[0, 1, 0]
                 ),
@@ -53,7 +53,7 @@ class MitsubaRender:
             },
             'shape': {
                 'type': 'rectangle',
-                'to_world': T.translate([0.04, 0, 0]).rotate([0, 1, 0], 0).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3]),
+                'to_world': T.translate([0, 0, 0]).rotate([0, 1, 0], 0).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3]),
                 'bsdf': {
                     'type': 'normalmap',
                     'normalmap': {
@@ -96,7 +96,7 @@ class MitsubaRender:
             'emitter': {
                 'type': 'envmap',
                 'filename': 'ennis.exr',
-                'scale': 0.5,
+                'scale': 1,
                 'to_world': T.rotate([0, 1, 0], 0)
             }
         }

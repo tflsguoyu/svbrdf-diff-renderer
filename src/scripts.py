@@ -3,6 +3,7 @@
 # Copyright (c) 2024, Yu Guo. All rights reserved.
 
 import os
+import shutil
 import numpy as np
 import torch as th
 
@@ -52,7 +53,7 @@ def render_envmap(data_dir, res):
         imwrite(im, vid_dir / f"{i:03d}.png", flag="srgb")
 
     for j, ii in enumerate(range(i-1, 0, -1)):
-        os.system(f'cp {str(vid_dir / f"{ii:03d}.png")} {str(vid_dir / f"{i+j+1:03d}.png")}')
+        shutil.copy(str(vid_dir / f"{ii:03d}.png"), str(vid_dir / f"{i+j+1:03d}.png"))
 
     img2gif(vid_dir / "*.png", data_dir / "vid.gif")
 
