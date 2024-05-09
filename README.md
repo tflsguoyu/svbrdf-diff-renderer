@@ -81,22 +81,22 @@ For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initia
 From left to right: input photos, output texture maps (256x256) from MaterialGAN, output high-res maps (1024x1024) from per-pixel optimization.
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/target/all.jpg" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/target/all.jpg" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/target/all.jpg" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/1024/tex.jpg" width="128px">
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/target/all.jpg" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/target/all.jpg" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/target/all.jpg" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/1024/tex.jpg" width="128px">
 
 <details>
 
