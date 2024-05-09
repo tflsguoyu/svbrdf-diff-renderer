@@ -59,6 +59,7 @@ class MitsubaRender:
                     'normalmap': {
                         'type': 'bitmap',
                         'filename': 'nom.png',
+                        'to_uv': T.scale([1, -1, 1]),
                         'raw': True
                     },
                     'bsdf': {
@@ -70,11 +71,13 @@ class MitsubaRender:
                             'alpha': {
                                 'type': 'bitmap',
                                 'filename': 'rgh.png',
+                                'to_uv': T.scale([1, -1, 1]),
                                 'raw': False
                             },
                             'specular_reflectance': {
                                 'type': 'bitmap',
                                 'filename': 'spe.png',
+                                'to_uv': T.scale([1, -1, 1]),
                                 'raw': False
                             }
                         },
@@ -83,6 +86,7 @@ class MitsubaRender:
                             'reflectance': {
                                 'type': 'bitmap',
                                 'filename': 'dif.png',
+                                'to_uv': T.scale([1, -1, 1]),
                                 'raw': False
                             }
                         }

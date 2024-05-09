@@ -4,7 +4,7 @@
 
 In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/github/teaser.jpg" width="1000px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/github/teaser.jpg" width="600px">
 
 [[Paper](https://github.com/tflsguoyu/materialgan_paper/blob/master/materialgan.pdf)]
 [[Code](https://github.com/tflsguoyu/svbrdf-diff-renderer)]
@@ -15,37 +15,47 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
 [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)]
 
-
-## Python dependencies 
+# Quick start
+## 1. Python dependencies 
 `torch`, `torchvision`, `opencv-python`, `matplotlib`, `pupil_apriltags`(for data capture), `mitsuba`(for envmap rendering)
 
 Tested on, 
 1. MacOS, python3.11, pytorch2.2(CPU)
 2. Windows10, python3.11, pytorch2.3, CUDA11.8 
 
-## Pretrained MaterialGAN model
+## 2. Pretrained MaterialGAN model
 Download all the checkpoints to the folder `ckp`: 
 [`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth?rlkey=ykovb3owafmz6icvss13sdddl&dl=0)
 [`latent_avg_W+_256.pt`](https://www.dropbox.com/scl/fi/nf4kfoiqx6h7baxpbfu01/latent_avg_W-_256.ptrlkey=ot0yfkbgq47vt45huh65mgwit&st=724ubgqp&dl=0)
 [`latent_const_W+_256.pt`](https://www.dropbox.com/scl/fi/mdh8boshpfc6lwktrfh4i/latent_const_W-_256.pt?rlkey=gy55tp5h6c91icxhdzzbf5sss&st=hzxk2580&dl=0)
 [`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt?rlkey=ckydqxdpyvzy7kns2h0geuh4e&st=d7ytmxz5&dl=0)
 
-## Usage
+## 3. Usage
 To optimize SVBRDF maps, we need several images with different lighting and a corresponding JSON file, which has all the information included. 
 If you use our dataset, all the JSON files are provided. If you want to capture new data, see below instruction. The JSON file will be generated automatically.
 
 See `run.py` for more details. 
 
-## Capture your own data with a smartphone
+# Real captured Dataset
+## 1. Capture your own data with a smartphone
+<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
+
+<details>
+  
+<summary>Click to see more details</summary>
+
+Steps:
 1. Print "fig/tag36h11_print.png" on a solid paper with proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red arrow line in the below figure.
 3. Place it on the material you want to capture and make the paper as flat as possible.
 4. Turn on the camera flashlight and capture images from different views.
 5. Create a data folder for captured images. We provide an example here, `data/yellow_box-17.0-0.1/raw`.
-6. Run `gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)` in `run.py`.
+6. Run the script in `run.py`.
+   ```bash
+   gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)
+   ```
 The `size` here is the number you measured from step 2; `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
-7. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
-<img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
+8. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
 
 Tips:
 1. All markers should be captured and in focus and the letter `A` should be facing up.
@@ -55,13 +65,18 @@ Tips:
 5. `.heic` image format is not supported now. Convert it to `.png`/`.jpg` first. 
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
-## The real [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] we used in this paper 
+</details>
+  
+## 2. The [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] we used in this paper 
 The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
-- `optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])`
-- `optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")`
-- `optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")`
 
-For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization, as shown below.
+```bash
+optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])
+optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")
+optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")
+```
+
+For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization. The results are shown below.
 
 From left to right: input photos, output texture maps (256x256) from MaterialGAN, output high-res maps (1024x1024) from per-pixel optimization.
 
@@ -71,6 +86,10 @@ From left to right: input photos, output texture maps (256x256) from MaterialGAN
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/1024/tex.jpg" width="130px">
 
+<details>
+  
+<summary>Click to see more results</summary>
+  
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/optim_latent/1024/tex.jpg" width="130px">
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/optim_latent/1024/tex.jpg" width="130px">
@@ -115,6 +134,118 @@ For some specular materials, you can see the highlights are baked in the roughne
 
 Notes, the high-res output uses MaterialGAN output as the initial but only has pixel loss constrain during the optimization. Although more details are recovered, sometimes it will overfit. See the above example.
 
-We will provide more data in the future.
+</details>
 
-## [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
+We also provide the code in `run.py` to generate novel-view renderings with an environment map,
+
+```bash
+render_envmap(material_dir / "optim_latent/1024", 1024)
+```
+([ImageMagick](https://imagemagick.org/) is needed!)
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/vid.gif" width="130px">
+
+## 3. The [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather2/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_laptop/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_laptop/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_laptop/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_leather/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_leather/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_leather/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_metal/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_metal/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_metal/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_redleather/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_redleather/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_redleather/optim_latent/1024/tex.jpg" width="130px">
+
+<details>
+
+<summary>Click to see more results</summary>
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_redmetal/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_redmetal/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_redmetal/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_shinny_metal/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_shinny_metal/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_shinny_metal/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_starfabric1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_starfabric1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_starfabric1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_starfabric2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_starfabric2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_starfabric2/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_wood1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_wood1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_wood1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_wood2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_wood2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_wood2/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_leather_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_leather_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_leather_1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_plastic_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_plastic_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_plastic_2/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_stone_3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_stone_3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_stone_3/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wall_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wall_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wall_1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wall_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wall_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wall_2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_3/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_4/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_4/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_4/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_5/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_5/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_5/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_6/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_6/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_6/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_7/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_7/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_7/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_8/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_8/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_8/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_9/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_9/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_9/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_10/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_10/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home_wood_10/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluecanvas1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluecanvas1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluecanvas1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluecanvas2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluecanvas2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluecanvas2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluefabric/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluefabric/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_bluefabric/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_browncanvas/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_browncanvas/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_browncanvas/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_greyfabric/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_greyfabric/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_greyfabric/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_kitchen/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_kitchen/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_kitchen/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_leather/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_leather/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_leather/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_orangeleather/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_orangeleather/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_orangeleather/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_shoe1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_shoe1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_shoe1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_shoe2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_shoe2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_shoe2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_table/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_table/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_table/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_yellowcanvas/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_yellowcanvas/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/home2_yellowcanvas/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/lab2_leather/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/lab2_leather/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/lab2_leather/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/lab2_tile2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/lab2_tile2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/lab2_tile2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_leather_3/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_metal_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_metal_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_metal_1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_3/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_5/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_5/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_5/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_6/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_6/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_plastic_6/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_stone_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_stone_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_stone_1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_stone_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_stone_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_stone_2/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_2/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_3/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_4/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_4/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_4/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_5/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_5/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wall_5/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_3/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_4/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_4/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_4/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_5/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_5/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_5/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_6/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_6/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_6/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_7/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_7/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_7/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_8/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_8/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_8/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_9/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_9/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima_wood_9/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_fabric1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_fabric1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_fabric1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_fabric2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_fabric2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_fabric2/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_metal/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_metal/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_metal/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_plastic/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_plastic/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_plastic/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_shoe/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_shoe/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/nima2_shoe/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground1/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground2/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_ground3/optim_latent/1024/tex.jpg" width="130px">
+
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_metal/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_metal/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/peter_metal/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/wen-laptop/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/wen-laptop/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/wen-laptop/optim_latent/1024/tex.jpg" width="130px">
+
+</detail>
+</details>
+
+# Citation
+
+If you find this work useful for your research, please cite:
+
+```
+@article{Guo:2020:MaterialGAN,
+  title={MaterialGAN: Reflectance Capture using a Generative SVBRDF Model},
+  author={Guo, Yu and Smith, Cameron and Ha\v{s}an, Milo\v{s} and Sunkavalli, Kalyan and Zhao, Shuang},
+  journal={ACM Trans. Graph.},
+  volume={39},
+  number={6},
+  year={2020},
+  pages={254:1--254:13}
+}
+```
+
+# Contacts
+
+Welcome to report bugs and leave comments (Yu Guo: tflsguoyu@gmail.com)
