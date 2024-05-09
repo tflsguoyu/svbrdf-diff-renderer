@@ -71,79 +71,154 @@ Tips:
 The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
 
 ```bash
-optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [2000, 10, 10], ["ckp/latent_avg_W+_256.pt"])
-optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 100, tex_init="textures")
-optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 100, tex_init="textures")
+optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [1000, 10, 10], "auto")
+optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 20, tex_init="textures")
+optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 20, tex_init="textures")
 ```
 
-For most of the cases, we use `ckp = ["ckp/latent_avg_W+_256.pt"]` as the initialization. The results are shown below.
+For most of the cases, we use `auto` mode as the initialization. The results are shown below (input photos and output texture maps (1024x1024)),
 
-From left to right: input photos, output texture maps (256x256) from MaterialGAN, output high-res maps (1024x1024) from per-pixel optimization.
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile2/optim_latent/1024/tex.jpg" width="130px">
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/optim_latent/1024/tex.jpg" width="130px">
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book2/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-red/optim_latent/1024/tex.jpg" width="128px">
 
 <details>
-  
+
 <summary>Click to see more results</summary>
   
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag2/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag3/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-blue/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-brown/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-brown/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-darkbrown/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-darkbrown/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-brown/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-brown/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-brown/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-darkbrown/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-darkbrown/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/leather-darkbrown/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-carpet/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-carpet/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-foam/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-foam/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-carpet/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-carpet/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-carpet/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-foam/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-foam/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-foam/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-grid/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-grid/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/rubber-pattern/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/rubber-pattern/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bathroom-tile/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bathroom-tile/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-grid/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-grid/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-grid/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bigtile/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bigtile/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-smalltile/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-smalltile/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/rubber-pattern/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/rubber-pattern/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/rubber-pattern/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bathroom-tile/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bathroom-tile/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bathroom-tile/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bigtile/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bigtile/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-bigtile/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-smalltile/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-smalltile/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-smalltile/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-color/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-color/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-red-bump/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-red-bump/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/target/all.jpg" width="130px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/optim_latent/1024/tex.jpg" width="130px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-jatoba/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-jatoba/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-knotty/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-knotty/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-laminate/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-laminate/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-t/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-t/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-color/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-color/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-color/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-red-bump/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-red-bump/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-red-bump/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-tile/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-tile/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-treeskin/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-treeskin/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-walnut/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-walnut/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-jatoba/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-jatoba/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-jatoba/optim_latent/1024/tex.jpg" width="130px">
+For some specular materials, the highlights are baked in the roughness maps. Using a lower roughness as initialization (`ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]`) will give better results,
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-knotty/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-knotty/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-knotty/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-laminate/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-laminate/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-laminate/optim_latent/1024/tex.jpg" width="130px">
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-t/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-t/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-t/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-tile/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-tile/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-tile/optim_latent/1024/tex.jpg" width="130px">
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-treeskin/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-treeskin/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-treeskin/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-walnut/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-walnut/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-walnut/optim_latent/1024/tex.jpg" width="130px">
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/optim_latent/1024/tex.jpg" width="130px">
-
-<!-- <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/VVVVVVVVVVV/optim_latent/1024/tex.jpg" width="130px"> -->
-
-For some specular materials, you can see the highlights are baked in the roughness maps. You could try different initialization like `ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]`, which use lower roughness as initial. See the results below, which converged to better results.
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent_const/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent_const/1024/tex.jpg" width="130px">
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent_const/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent_const/1024/tex.jpg" width="130px">
-
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/plastic-red-carton/optim_latent_const/1024/tex.jpg" width="130px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/target/all.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent_const/256/tex.jpg" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent_const/1024/tex.jpg" width="130px">
-
-Notes, the high-res output uses MaterialGAN output as the initial but only has pixel loss constrain during the optimization. Although more details are recovered, sometimes it will overfit. See the above example.
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent_spe/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent_spe/1024/tex.jpg" width="128px">
+&nbsp;&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent_spe/1024/tex.jpg" width="128px">
 
 </details>
 
 We also provide the code in `run.py` to generate novel-view renderings with an environment map,
 
 ```bash
-render_envmap(material_dir / "optim_latent/1024", 1024)
+render_envmap(material_dir / "optim_latent/1024", 256)
 ```
 ([ImageMagick](https://imagemagick.org/) is needed!)
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/256/vid.gif" width="130px"> <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/vid.gif" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/vid.gif" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/256/vid.gif" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/vid.gif" width="128px">
 
 ## 3. The [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
 
