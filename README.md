@@ -76,7 +76,7 @@ optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 20, tex_
 optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 20, tex_init="textures")
 ```
 
-For most of the cases, we use auto mode as the initialization. The results are shown below (input photos and output texture maps (1024x1024)),
+For most of the cases, we use `auto` mode as the initialization. The results are shown below (input photos and output texture maps (1024x1024)),
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/tex.jpg" width="128px">
