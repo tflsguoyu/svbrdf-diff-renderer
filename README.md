@@ -163,8 +163,8 @@ For most of the cases, we use `auto` mode as the initialization. The results are
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/optim_latent/1024/tex.jpg" width="128px">
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/target/all.jpg" width="130px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/optim_latent/1024/tex.jpg" width="130px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/target/all.jpg" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/optim_latent/1024/tex.jpg" width="128px">
@@ -216,9 +216,9 @@ render_envmap(material_dir / "optim_latent/1024", 256)
 ```
 ([ImageMagick](https://imagemagick.org/) is needed!)
 
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/256/vid.gif" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/book1/optim_latent/256/vid.gif" width="128px">&nbsp;
-<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/256/vid.gif" width="128px">
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/vid.gif" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/cards-blue/optim_latent/1024/vid.gif" width="128px">&nbsp;
+<img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/1024/vid.gif" width="128px">
 
 ## 3. The [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
 
