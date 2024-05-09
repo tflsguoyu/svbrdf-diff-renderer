@@ -146,55 +146,55 @@ From left to right: input photos, output texture maps (256x256) from MaterialGAN
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-granite/optim_latent/1024/tex.jpg" width="128px">
-&nbsp;&nbsp;
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-ground-flake/optim_latent/1024/tex.jpg" width="128px">
-
+&nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-shiny/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/stone-spec-vinyl-floor/optim_latent/1024/tex.jpg" width="128px">
-&nbsp;&nbsp;
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-color/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-color/optim_latent/1024/tex.jpg" width="128px">
-
+&nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-red-bump/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-red-bump/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-green/optim_latent/1024/tex.jpg" width="128px">
-&nbsp;&nbsp;
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/target/all.jpg" width="130px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wall-plaster-white/optim_latent/1024/tex.jpg" width="130px">
-
+&nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-alder/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-jatoba/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-jatoba/optim_latent/1024/tex.jpg" width="128px">
-&nbsp;&nbsp;
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-knotty/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-knotty/optim_latent/1024/tex.jpg" width="128px">
-
+&nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-laminate/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-laminate/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-t/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-t/optim_latent/1024/tex.jpg" width="128px">
-&nbsp;&nbsp;
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-tile/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-tile/optim_latent/1024/tex.jpg" width="128px">
-
+&nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-treeskin/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-treeskin/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-walnut/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-walnut/optim_latent/1024/tex.jpg" width="128px">
-&nbsp;&nbsp;
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/wood-bamboo/optim_latent/1024/tex.jpg" width="128px">
-
+&nbsp;&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bamboo-veawe/optim_latent/1024/tex.jpg" width="128px">
 
