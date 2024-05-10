@@ -67,7 +67,7 @@ Tips:
 
 </details>
   
-## 2. The [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] we used in this paper 
+## 2. The [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] used in this paper 
 The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
 
 ```bash
@@ -221,6 +221,8 @@ render_envmap(material_dir / "optim_latent/1024", 256)
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/1024/vid.gif" width="128px">
 
 ## 3. The [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)] from [Xilong Zhou](https://people.engr.tamu.edu/nimak/Papers/SIGAsia2022_LookAhead/index.html) with our JSON files.
+
+The results are optimized by MaterialGAN,
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather1/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data_xl/guo2_blackleather1/optim_latent/1024/tex.jpg" width="128px">
