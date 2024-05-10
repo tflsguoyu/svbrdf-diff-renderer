@@ -14,7 +14,7 @@ class MitsubaRender:
 
     def render(self, angle):
         self.scene['shape']['to_world'] = \
-            T.translate([0.04, 0, 0]).rotate([0, 1, 0], angle).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3])
+            T.translate([0, 0, 0]).rotate([0, 1, 0], angle).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3])
         return np.array(mi.render(mi.load_dict(self.scene))).clip(0, 1) ** (1 / 2.2)
 
     def load_texturemaps(self, maps_dir):
