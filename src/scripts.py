@@ -11,7 +11,7 @@ from .capture import Capture
 from .materialgan import MaterialGANOptim
 from .microfacet import Microfacet
 from .svbrdf import SvbrdfIO, SvbrdfOptim
-from .render import MitsubaRender
+from .mitsubarender import MitsubaRender
 from .imageio import imwrite, img2gif
 
 

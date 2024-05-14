@@ -1,7 +1,7 @@
 {   
     "_comment": "in cm uint",
-    "reference_dir": "target/256/maps",
-    "target_dir": "target/256",
+    "reference_dir": "target/maps",
+    "target_dir": "target",
     "im_size": 6.848,
     "idx": [0, 1, 2, 3, 4, 5, 6, 7, 8],
     "camera_pos": [[-3, 3, 16],

@@ -15,6 +15,7 @@ from .optimization import Optim
 class SvbrdfOptim(Optim):
     def __init__(self, device, renderer_obj):
         super().__init__(device, renderer_obj)
+        self.res = renderer_obj.res
 
     def init_from_tex(self, textures):
         self.textures = self.gradient(textures)

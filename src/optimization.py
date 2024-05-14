@@ -13,7 +13,6 @@ class Optim:
         self.eps = 1e-4
         self.loss_l2 = th.nn.MSELoss().to(device)
         self.renderer_obj = renderer_obj
-        self.res = renderer_obj.res
 
     def gradient(self, parameters):
         if isinstance(parameters, list):
