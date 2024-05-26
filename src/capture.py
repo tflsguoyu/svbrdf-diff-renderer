@@ -35,12 +35,12 @@ class Capture:
         self.save_to = folder / self.save_to_relative
 
     def eval(self, size, depth, fisheye=True):
+        point2d_list = self.point2d(debug=False)
         point3d_list = self.point3d(size=size, debug=False)
-        point2d_list = self.point2d(self.ims, debug=False)
         calibs = self.calibrate(point3d_list, point2d_list)
         if fisheye:
-            self.ims = self.undistort(self.ims, calibs[0], calibs[1])
-            point2d_list = self.point2d(self.ims, debug=False)
+            self.undistort(calibs[0], calibs[1])
+            point2d_list = self.point2d(debug=False)
             calibs = self.calibrate(point3d_list, point2d_list)
         crops, fulls = self.rectify(point3d_list, point2d_list, calibs, size=size, d=depth, debug=False)
         camera_pos = self.get_camera_pos(calibs[2], calibs[3])
@@ -149,12 +149,11 @@ class Capture:
 
         return np.hstack(camera_pos).transpose()
 
-    def undistort(self, ims, mtx, dist):
+    def undistort(self, mtx, dist):
         ims_undistort = []
         for i in range(self.n_of_imgs):
-            ims_undistort.append(cv2.undistort(ims[i], mtx, dist))
-
-        return ims_undistort
+            ims_undistort.append(cv2.undistort(self.ims[i], mtx, dist))
+        self.ims = ims_undistort
 
     def calibrate(self, point3d_list, point2d_list):
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
@@ -163,10 +162,17 @@ class Capture:
         print("[DONE:Capture] Calibration")
         return mtx, dist, rvecs, tvecs
 
-    def point2d(self, ims, debug=False):
+    def point2d(self, debug=False):
         corners_list = []
-        for im in ims:
-            corners_list.append(self.detect_2dmarker(im, debug))
+        ims_list = [] 
+        for im in self.ims:
+            corners = self.detect_2dmarker(im, debug)
+            if corners.shape[0] != 64:
+                continue
+            ims_list.append(im)
+            corners_list.append(corners)
+        self.ims = ims_list
+        self.n_of_imgs = len(self.ims)
         return corners_list
 
     def point3d(self, size, debug=False):
