@@ -28,9 +28,10 @@ class Capture:
         self.full_res = 1600
         self.crop_res = 1024
 
-        self.json_256_dir = folder / "optim_latent_256.json"
-        self.json_512_dir = folder / "optim_pixel_256_to_512.json"
-        self.json_1024_dir = folder / "optim_pixel_512_to_1024.json"
+        self.json_l256_dir = folder / "optim_latent_256.json"
+        self.json_l512_dir = folder / "optim_pixel_256_to_512.json"
+        self.json_l1024_dir = folder / "optim_pixel_512_to_1024.json"
+        self.json_p1024_dir = folder / "optim_pixel_1024.json"
         self.save_to_relative = "target"
         self.save_to = folder / self.save_to_relative
 
@@ -62,45 +63,32 @@ class Capture:
         data = {
             "_comment": "in cm uint",
             "target_dir": self.save_to_relative,
-            "optimize_dir": "optim_latent/256",
-            "rerender_dir": "optim_latent/256",
+            "optimize_dir": "optim_pixel/1024",
+            "rerender_dir": "optim_pixel/1024",
             "im_size": size / self.full_res * self.crop_res,
             "idx": list(range(self.n_of_imgs)),
             "camera_pos": camera_pos.tolist(),
             "light_pos": camera_pos.tolist(),
             "light_pow": [1500, 1500, 1500]
         }
-        with open(self.json_256_dir, "w") as f:
+        with open(self.json_p1024_dir, "w") as f:
             json.dump(data, f, indent=4)
 
-        data = {
-            "_comment": "in cm uint",
-            "reference_dir": "optim_latent/256",
-            "target_dir": self.save_to_relative,
-            "optimize_dir": "optim_latent/512",
-            "rerender_dir": "optim_latent/512",
-            "im_size": size / self.full_res * self.crop_res,
-            "idx": list(range(self.n_of_imgs)),
-            "camera_pos": camera_pos.tolist(),
-            "light_pos": camera_pos.tolist(),
-            "light_pow": [1500, 1500, 1500]
-        }
-        with open(self.json_512_dir, "w") as f:
+        data["optimize_dir"] = "optim_latent/256"
+        data["rerender_dir"] = "optim_latent/256"
+        with open(self.json_l256_dir, "w") as f:
             json.dump(data, f, indent=4)
 
-        data = {
-            "_comment": "in cm uint",
-            "reference_dir": "optim_latent/512",
-            "target_dir": self.save_to_relative,
-            "optimize_dir": "optim_latent/1024",
-            "rerender_dir": "optim_latent/1024",
-            "im_size": size / self.full_res * self.crop_res,
-            "idx": list(range(self.n_of_imgs)),
-            "camera_pos": camera_pos.tolist(),
-            "light_pos": camera_pos.tolist(),
-            "light_pow": [1500, 1500, 1500]
-        }
-        with open(self.json_1024_dir, "w") as f:
+        data["reference_dir"] = "optim_latent/256"
+        data["optimize_dir"] = "optim_latent/512"
+        data["rerender_dir"] = "optim_latent/512"
+        with open(self.json_l512_dir, "w") as f:
+            json.dump(data, f, indent=4)
+
+        data["reference_dir"] = "optim_latent/512"
+        data["optimize_dir"] = "optim_latent/1024"
+        data["rerender_dir"] = "optim_latent/1024"
+        with open(self.json_l1024_dir, "w") as f:
             json.dump(data, f, indent=4)
 
     def rectify(self, point3d_list, point2d_list, calibs, size, d=0, debug=False):

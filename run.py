@@ -40,7 +40,7 @@ if False:
 # Optimize texture maps by MaterialGAN for resolution 256x256
 if False:
     # Different initialization
-    # ckp = []  # random latent and noise
+    # ckp = "auto"  # automatically choose initial ckp
     # ckp = ["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"]  # embeded latent and noise for constant maps (lower roughness)
     ckp = ["ckp/latent_avg_W+_256.pt"]  # average latent and zero noise
 
@@ -50,7 +50,7 @@ if False:
 # Optimize texture maps by MaterialGAN for resolution higher than 256x256
 # MaterialGAN only support 256x256, so `res` in optim_ganlatent(_, res, _, _, _, _) should always be 256
 # For higher resolution, we optimize 256x256 maps by MaterialGAN first, than use the scale 2x output as the initialization of 512x512 maps
-if True:
+if False:
     optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [1000, 10, 10], "auto")
     optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 20, tex_init="textures")
     optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 20, tex_init="textures")
