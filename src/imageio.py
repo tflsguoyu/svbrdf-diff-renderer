@@ -5,6 +5,7 @@
 import os
 import cv2
 import numpy as np
+from PIL import Image
 
 
 def imread(filename, flag=None, dim=None):
@@ -110,6 +111,13 @@ def tex4to1(folder):
     imwrite(tex, folder / "tex.png")
 
 
-def img2gif(in_filenames, out_filename):
-    cmd = f"convert -delay 4 -loop 0 {str(in_filenames)} {str(out_filename)}"
-    os.system(cmd)
+def img2gif(in_filenames, out_filename, method="Pillow"):
+    if method == "Pillow":
+        images = [Image.open(str(in_filename)) for in_filename in in_filenames]
+        images[0].save(str(out_filename), save_all=True, append_images=images[1:], optimize=False, loop=0, duration=40)
+    elif method == "ImageMagick":
+        cmd = f"convert -delay 4 -loop 0 {str(in_filenames)} {str(out_filename)}"
+        os.system(cmd)
+    else:
+        print(f"[ERROR:imageio:img2gif] Unknown method: {method}")
+        exit()

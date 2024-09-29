@@ -49,13 +49,14 @@ def render_envmap(data_dir, res):
     angle_range_all = (-np.cos(np.linspace(0, np.pi, 59))) * 40
 
     for i, angle in enumerate(angle_range_all):
-        im = render_obj.render(angle)
+        im = render_obj.render(angle, 0.5)
         imwrite(im, vid_dir / f"{i:03d}.png", flag="srgb")
 
     for j, ii in enumerate(range(i-1, 0, -1)):
         shutil.copy(str(vid_dir / f"{ii:03d}.png"), str(vid_dir / f"{i+j+1:03d}.png"))
 
-    img2gif(vid_dir / "*.png", data_dir / "vid.gif")
+    # img2gif(vid_dir / "*.png", data_dir / "vid.gif", method="ImageMagick")
+    img2gif(vid_dir.glob("*.png"), data_dir / "vid.gif", method="Pillow")
 
 
 def gen_targets_from_capture(data_dir, size=17.0, depth=0.1):

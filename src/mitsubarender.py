@@ -12,9 +12,10 @@ class MitsubaRender:
         self.scene['emitter']['filename'] = envmap_dir
         self.load_texturemaps(maps_dir)
 
-    def render(self, angle):
+    def render(self, angle, light_intensity=1.0):
         self.scene['shape']['to_world'] = \
             T.translate([0, 0, 0]).rotate([0, 1, 0], angle).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3])
+        self.scene['emitter']['scale'] = light_intensity
         return np.array(mi.render(mi.load_dict(self.scene))).clip(0, 1) ** (1 / 2.2)
 
     def load_texturemaps(self, maps_dir):
