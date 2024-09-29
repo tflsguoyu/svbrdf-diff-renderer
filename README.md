@@ -10,41 +10,51 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 [[Code](https://github.com/tflsguoyu/svbrdf-diff-renderer)]
 [[Supplemental Materials](https://tflsguoyu.github.io/materialgan_suppl/)]
 [[Poster](https://github.com/tflsguoyu/materialgan_poster/blob/master/materialgan_poster.pdf)]
-[Fastforward on Siggraph Asia 2020 ([Video](https://youtu.be/fD6CTb1DlbE))([Slides](https://www.dropbox.com/s/qi594y27dqa7irf/materialgan_ff.pptx?dl=0))] \
+[Fastforward on Siggraph Asia 2020 ([Video](https://youtu.be/fD6CTb1DlbE))([Slides](https://www.dropbox.com/s/qi594y27dqa7irf/materialgan_ff.pptx?dl=0))]
 [Presentation on Siggraph Asia 2020 ([Video](https://youtu.be/CrAoVsJf0Zw))([Slides](https://www.dropbox.com/s/zj2mhrminoamrdg/materialgan_main.pptx?dl=0))]
 [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)]
 [[Dataset_Zhou(76)](https://drive.google.com/file/d/1kfefC6YbkbSazLeJ7uUUUFR6WEeWozgA/view?usp=sharing)]
 
 # Quick start
-## 1. Python dependencies 
-`torch`, `torchvision`, `opencv-python`, `matplotlib`, `pupil_apriltags`(for data capture), `mitsuba`(for envmap rendering)
 
-Tested on, 
+## 1. Python dependencies
+
+`torch`, `torchvision`, `opencv-python`, `matplotlib`, `tqdm`, `pupil-apriltags`(for data capture), `mitsuba`(for envmap rendering)
+
+Tested on,
+
 1. MacOS, python3.11, pytorch2.2(CPU)
-2. Windows10, python3.11, pytorch2.3, CUDA11.8 
+2. Windows10, python3.11, pytorch2.4.1, CUDA11.8
+
+Notes, `pupil-apriltags` installation will be failed in python3.12.
 
 ## 2. Pretrained MaterialGAN model
-Download all the checkpoints to the folder `ckp`: 
+
+Download all the checkpoints to the folder `ckp`:
 [`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth?rlkey=ykovb3owafmz6icvss13sdddl&dl=0)
 [`latent_avg_W+_256.pt`](https://www.dropbox.com/scl/fi/nf4kfoiqx6h7baxpbfu01/latent_avg_W-_256.pt?rlkey=ot0yfkbgq47vt45huh65mgwit&st=bjs7tsw1&dl=0)
 [`latent_const_W+_256.pt`](https://www.dropbox.com/scl/fi/mdh8boshpfc6lwktrfh4i/latent_const_W-_256.pt?rlkey=gy55tp5h6c91icxhdzzbf5sss&st=hzxk2580&dl=0)
 [`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt?rlkey=ckydqxdpyvzy7kns2h0geuh4e&st=d7ytmxz5&dl=0)
 
 ## 3. Usage
-To optimize SVBRDF maps, we need several images with different lighting and a corresponding JSON file, which has all the information included. 
+
+To optimize SVBRDF maps, we need several images with different lighting and a corresponding JSON file, which has all the information included.
 If you use our dataset, all the JSON files are provided. If you want to capture new data, see below instruction. The JSON file will be generated automatically.
 
-See `run.py` for more details. 
+See `run.py` for more details.
 
 # Real captured Dataset
+
 ## 1. Capture your own data with a smartphone
+
 <img src="https://github.com/tflsguoyu/svbrdf-diff-renderer/blob/master/fig/fig1.png" width="600px">
 
 <details>
-  
+
 <summary>Click to see more details</summary>
 
 Steps:
+
 1. Print "fig/tag36h11_print.png" on a solid paper with proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red arrow line in the below figure.
 3. Place it on the material you want to capture and make the paper as flat as possible.
@@ -54,20 +64,23 @@ Steps:
    ```bash
    gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)
    ```
+
 The `size` here is the number you measured from step 2; `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
 8. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
 
 Tips:
+
 1. All markers should be captured and in focus and the letter `A` should be facing up.
 2. It's better to capture during the night or in a dark room and turn off other lights.
 3. It's better to see the highlights in the cropped area.
 4. Change camera mode to manual, and keep the white balance and focal length the same during the captures.
-5. `.heic` image format is not supported now. Convert it to `.png`/`.jpg` first. 
+5. `.heic` image format is not supported now. Convert it to `.png`/`.jpg` first.
 6. Preferred capturing order: highlight in topleft -> top -> topright -> left -> center -> right -> bottomleft -> bottom -> bottomright. See images in `data/yellow_box/raw` as references.
 
 </details>
-  
-## 2. The [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] used in this paper 
+
+## 2. The [[Dataset(38)](https://drive.google.com/file/d/1Vs2e35c4bNHRUu3ON4IsuOOP6uK8Ivji/view?usp=sharing)] used in this paper
+
 The dataset includes corresponding JSON files. We put our results here as a reference, and you can also generate the results using our code from `run.py`.
 
 ```bash
@@ -99,7 +112,7 @@ For most of the cases, we use `auto` mode as the initialization. The results are
 <details>
 
 <summary>Click to see more results</summary>
-  
+
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/target/all.jpg" width="128px">&nbsp;
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/giftbag1/optim_latent/1024/tex.jpg" width="128px">
 &nbsp;&nbsp;
@@ -214,6 +227,7 @@ We also provide the code in `run.py` to generate novel-view renderings with an e
 ```bash
 render_envmap(material_dir / "optim_latent/1024", 256)
 ```
+
 ([ImageMagick](https://imagemagick.org/) is needed!)
 
 <img src="https://github.com/tflsguoyu/materialgan_suppl/blob/master/data/bathroomtile1/optim_latent/1024/vid.gif" width="128px">&nbsp;
@@ -478,3 +492,4 @@ If you find this work useful for your research, please cite:
 # Contacts
 
 Welcome to report bugs and leave comments (Yu Guo: tflsguoyu@gmail.com)
+

@@ -38,7 +38,7 @@ class MaterialGANOptim(Optim):
             latent = self.net_obj.net.truncation(latent_w)
         else:
             if os.path.exists(ckp[0]):
-                latent = th.load(ckp[0], map_location=self.device)
+                latent = th.load(ckp[0], map_location=self.device, weights_only=True)
             else:
                 print("[ERROR:MaterialGANOptim] Can not find latent vector ", ckp)
                 exit()
