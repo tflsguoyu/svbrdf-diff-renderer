@@ -24,7 +24,7 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 Tested on,
 
 1. MacOS, python3.11, pytorch2.2(CPU)
-2. Windows10, python3.11, pytorch2.4.1, CUDA11.8
+2. Windows10, python3.11, pytorch2.4.1, CUDA11.8/12.4
 
 Notes, `pupil-apriltags` installation will be failed in python3.12.
 
