@@ -53,7 +53,7 @@ See `run.py` for more details.
 
 <summary>Click to see more details</summary>
 
-Steps:
+~Steps:~
 
 1. Print "fig/tag36h11_print.png" on a solid paper with proper size and crop the center area.
 2. Measure `size`(in cm unit) with a ruler, see the red arrow line in the below figure.
@@ -64,10 +64,11 @@ Steps:
    ```bash
    gen_targets_from_capture(Path("data/yellow_box-17.0-0.1"), size=17.0, depth=0.1)
    ```
-  The `size` here is the number you measured from step 2; `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
 7. The generated target images are located in `data/yellow_box-17.0-0.1/target` and the corresponding JSON files are generated as well.
 
-Tips:
+The `size` here is the number you measured from step 2; `depth` is the distance (in cm unit) between the marker plane and the material plane. For example, if you attach the markers on thick cardboard, you should use a larger `depth`.
+
+~Tips:~
 
 1. All markers should be captured and in focus and the letter `A` should be facing up.
 2. It's better to capture during the night or in a dark room and turn off other lights.
