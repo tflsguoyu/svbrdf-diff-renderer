@@ -38,6 +38,8 @@ Download all the checkpoints to the folder `ckp`:
 
 ## 3. Usage
 
+Quick try: `python run.py`
+
 To optimize SVBRDF maps, we need several images with different lighting and a corresponding JSON file, which has all the information included.
 If you use our dataset, all the JSON files are provided. If you want to capture new data, see below instruction. The JSON file will be generated automatically.
 

@@ -28,7 +28,7 @@ if False:
 material_dir = Path("data/yellow_box-17.0-0.1")
 
 # Capture your own data
-if False:
+if True:
     gen_targets_from_capture(material_dir, size=17.0, depth=0.1)
 
 
@@ -50,12 +50,12 @@ if False:
 # Optimize texture maps by MaterialGAN for resolution higher than 256x256
 # MaterialGAN only support 256x256, so `res` in optim_ganlatent(_, res, _, _, _, _) should always be 256
 # For higher resolution, we optimize 256x256 maps by MaterialGAN first, than use the scale 2x output as the initialization of 512x512 maps
-if False:
+if True:
     optim_ganlatent(material_dir / "optim_latent_256.json", 256, 0.02, [1000, 10, 10], "auto")
     optim_perpixel(material_dir / "optim_pixel_256_to_512.json", 512, 0.01, 20, tex_init="textures")
     optim_perpixel(material_dir / "optim_pixel_512_to_1024.json", 1024, 0.01, 20, tex_init="textures")
 
 
 # Generate novel views with environment map
-if False:
+if True:
     render_envmap(material_dir / "optim_latent/1024", 256)
