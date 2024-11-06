@@ -26,7 +26,7 @@ Tested on,
 1. MacOS, python3.11, pytorch2.5.1, CPU
 2. Windows10/11, python3.11, pytorch2.5.1, CUDA12.4
 
-Notes, `pupil-apriltags` installation will be failed in python3.12. If you don't want to use our data capture method, you could choose python>=3.12.
+Notes, `pupil-apriltags` installation will be failed in python3.12. If you don't want to use our data capture method, you could skip this and choose python>=3.12.
 
 ## 2. Pretrained MaterialGAN model
 
