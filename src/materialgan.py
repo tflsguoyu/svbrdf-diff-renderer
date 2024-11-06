@@ -6,6 +6,8 @@ import os
 import numpy as np
 import torch as th
 import tqdm
+import requests
+from pathlib import Path
 from datetime import datetime
 
 from .descriptor import VGGLoss
@@ -20,6 +22,8 @@ class MaterialGANOptim(Optim):
     def __init__(self, device, renderer_obj, ckp):
         super().__init__(device, renderer_obj)
 
+        self.init_download_ckp()
+
         self.net_obj = StyleGAN2Generator('MaterialGAN', ckp)
 
         self.loss_large_feature = VGGLoss(device, np.array([1, 1, 4, 8])/14)
@@ -30,6 +34,27 @@ class MaterialGANOptim(Optim):
         for p in self.loss_small_feature.parameters():
             p.requires_grad = False
 
+    def init_download_ckp(self):
+        ckp = "ckp/materialgan.pth"
+        if not os.path.exists(ckp):
+            url = "https://huggingface.co/tflsguoyu/MaterialGAN/resolve/main/materialgan.pth"
+            self._download_checkpoint(ckp, url)        
+
+        ckp = "ckp/latent_avg_W+_256.pt"
+        if not os.path.exists(ckp):
+            url = "https://huggingface.co/tflsguoyu/MaterialGAN/resolve/main/latent_avg_W+_256.pt"
+            self._download_checkpoint(ckp, url)        
+
+        ckp = "ckp/latent_const_N_256.pt"
+        if not os.path.exists(ckp):
+            url = "https://huggingface.co/tflsguoyu/MaterialGAN/resolve/main/latent_const_N_256.pt"
+            self._download_checkpoint(ckp, url)        
+
+        ckp = "ckp/latent_const_W+_256.pt"
+        if not os.path.exists(ckp):
+            url = "https://huggingface.co/tflsguoyu/MaterialGAN/resolve/main/latent_const_W+_256.pt"
+            self._download_checkpoint(ckp, url)        
+
     def init_from(self, ckp):
         # initialize latent W+
         if len(ckp) == 0:
@@ -37,11 +62,7 @@ class MaterialGANOptim(Optim):
             latent_w = self.net_obj.net.mapping(latent_z)
             latent = self.net_obj.net.truncation(latent_w)
         else:
-            if os.path.exists(ckp[0]):
-                latent = th.load(ckp[0], map_location=self.device, weights_only=True)
-            else:
-                print("[ERROR:MaterialGANOptim] Can not find latent vector ", ckp)
-                exit()
+            latent = th.load(ckp[0], map_location=self.device, weights_only=True)
         self.latent = self.gradient(latent)
 
         # initialize noise
@@ -78,13 +99,16 @@ class MaterialGANOptim(Optim):
         textures[:, 6:9, :, :] = textures_tmp[:, 6:9, :, :].clamp(-1, 1)
         return textures
 
-    def optim(self, epochs, lr, svbrdf_obj):
+    def optim(self, epochs, lr, svbrdf_obj, optim_light):
         tmp_name = str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
         tmp_dir = svbrdf_obj.optimize_dir / "tmp" / tmp_name
         tmp_dir.mkdir(parents=True, exist_ok=True)
 
         total_epochs, l_epochs, n_epochs = epochs
         cycle_epochs = l_epochs + n_epochs
+
+        if optim_light:
+            svbrdf_obj.cl[2] = self.gradient(svbrdf_obj.cl[2])
 
         loss_image_list = []
         loss_feature_list = []
@@ -93,13 +117,21 @@ class MaterialGANOptim(Optim):
             # choose which variables to optimize
             epoch_tmp = epoch % cycle_epochs
             if int(epoch_tmp / l_epochs) == 0:  # optimize latent w+
-                self.optimizer = th.optim.Adam([self.latent], lr=lr, betas=(0.9, 0.999))
+                if optim_light:
+                    self.optimizer = th.optim.Adam([self.latent] + [svbrdf_obj.cl[2]], lr=lr, betas=(0.9, 0.999))
+                else:    
+                    self.optimizer = th.optim.Adam([self.latent], lr=lr, betas=(0.9, 0.999))
                 which_to_optimize = "L"
             else:  # optimize nosie
-                self.optimizer = th.optim.Adam(globalvar.noises, lr=lr, betas=(0.9, 0.999))
+                if optim_light:
+                    self.optimizer = th.optim.Adam(globalvar.noises + [svbrdf_obj.cl[2]], lr=lr, betas=(0.9, 0.999))
+                else:
+                    self.optimizer = th.optim.Adam(globalvar.noises, lr=lr, betas=(0.9, 0.999))
                 which_to_optimize = "N"
 
             # compute renderings
+            if optim_light:
+                self.renderer_obj.update_light(svbrdf_obj.cl[2])
             textures = self.latent_to_textures(self.latent)
             rendereds = self.renderer_obj.eval(textures)
 
@@ -113,7 +145,7 @@ class MaterialGANOptim(Optim):
             loss_feature_list.append(loss_feature.item())
             loss += loss_feature
 
-            pbar.set_postfix({"Loss": loss.item()})
+            pbar.set_postfix({"Loss": loss.item(), "Light": [int(svbrdf_obj.cl[2][0].item()), int(svbrdf_obj.cl[2][1].item()), int(svbrdf_obj.cl[2][2].item())]})
 
             # optimize
             self.optimizer.zero_grad()
@@ -139,3 +171,36 @@ class MaterialGANOptim(Optim):
         self.textures = textures
         self.loss = loss.item()
         self.loss_image = loss_image.item()
+
+    def _download_checkpoint(self, ckp_path, url):
+        """Download the checkpoint if it doesn't exist."""
+        # Create directory if it doesn't exist
+        Path(ckp_path).parent.mkdir(parents=True, exist_ok=True)
+        
+        try:
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            
+            # Get total file size
+            total_size = int(response.headers.get('content-length', 0))
+            block_size = 1024  # 1 KB
+
+            # Download with progress bar
+            with open(ckp_path, 'wb') as f, tqdm.tqdm(
+                desc="Downloading checkpoint",
+                total=total_size,
+                unit='iB',
+                unit_scale=True,
+                unit_divisor=1024,
+            ) as pbar:
+                for data in response.iter_content(block_size):
+                    size = f.write(data)
+                    pbar.update(size)
+                    
+            print(f"Successfully downloaded checkpoint to {ckp_path}")
+            
+        except Exception as e:
+            print(f"Error downloading checkpoint: {e}")
+            if os.path.exists(ckp_path):
+                os.remove(ckp_path)  # Remove partial download
+            raise

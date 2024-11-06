@@ -64,7 +64,7 @@ def gen_targets_from_capture(data_dir, size=17.0, depth=0.1):
     input_obj.eval(size, depth)
 
 
-def optim_perpixel(json_dir, res, lr, epochs, tex_init):
+def optim_perpixel(json_dir, res, lr, epochs, tex_init, optim_light=False):
     device = th.device("cuda:0" if th.cuda.is_available() else "cpu")
     # device = th.device("cpu")
 
@@ -86,14 +86,18 @@ def optim_perpixel(json_dir, res, lr, epochs, tex_init):
     else:
         exit()
 
-    optim_obj.optim(epochs, lr, svbrdf_obj)
+    optim_obj.optim(epochs, lr, svbrdf_obj, optim_light)
 
     svbrdf_obj.save_textures_th(optim_obj.textures.clamp(-1, 1), svbrdf_obj.optimize_dir)
+    
+    if optim_light:
+        print("Optimized light: ", svbrdf_obj.cl[2])
+        renderer_obj.update_light(svbrdf_obj.cl[2])
     rendereds = renderer_obj.eval(optim_obj.textures.clamp(-1, 1))
     svbrdf_obj.save_images_th(rendereds, svbrdf_obj.rerender_dir)
 
 
-def optim_ganlatent(json_dir, res, lr, epochs, tex_init):
+def optim_ganlatent(json_dir, res, lr, epochs, tex_init, optim_light=False):
     # epochs: list of 3 int. [0] is total epochs, [1] is epochs for latent, [2] is for noise, in each cycle.
     # tex_init: string. [], [PATH_TO_LATENT.pt], or [PATH_TO_LATENT.pt, PATH_TO_NOISE.pt]
 
@@ -110,10 +114,10 @@ def optim_ganlatent(json_dir, res, lr, epochs, tex_init):
 
     if tex_init == "auto":
         optim_obj.init_from(["ckp/latent_avg_W+_256.pt"])
-        optim_obj.optim([80,10,10], lr, svbrdf_obj)
+        optim_obj.optim([80,10,10], lr, svbrdf_obj, optim_light)
         loss_dif = optim_obj.loss_image
         optim_obj.init_from(["ckp/latent_const_W+_256.pt", "ckp/latent_const_N_256.pt"])
-        optim_obj.optim([80,10,10], lr, svbrdf_obj)
+        optim_obj.optim([80,10,10], lr, svbrdf_obj, optim_light)
         loss_spe = optim_obj.loss_image
         if loss_dif < loss_spe:
             print("Non-specular material!")
@@ -124,8 +128,12 @@ def optim_ganlatent(json_dir, res, lr, epochs, tex_init):
     else:
         optim_obj.init_from(tex_init)
     
-    optim_obj.optim(epochs, lr, svbrdf_obj)
+    optim_obj.optim(epochs, lr, svbrdf_obj, optim_light)
 
     svbrdf_obj.save_textures_th(optim_obj.textures, svbrdf_obj.optimize_dir)
+
+    if optim_light:
+        print("Optimized light: ", svbrdf_obj.cl[2])
+        renderer_obj.update_light(svbrdf_obj.cl[2])
     rendereds = renderer_obj.eval(optim_obj.textures)
     svbrdf_obj.save_images_th(rendereds, svbrdf_obj.rerender_dir)

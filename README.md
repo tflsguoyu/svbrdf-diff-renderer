@@ -17,28 +17,30 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 
 # Quick start
 
-## 1. Python dependencies
+## 1. Python dependencies (prefer to use `pip install`)
 
 `torch`, `torchvision`, `opencv-python`, `matplotlib`, `tqdm`, `pupil-apriltags`(for data capture), `mitsuba`(for envmap rendering)
 
 Tested on,
 
-1. MacOS, python3.11, pytorch2.2(CPU)
-2. Windows10, python3.11, pytorch2.4.1, CUDA11.8/12.4
+1. MacOS, python3.11, pytorch2.5.1, CPU
+2. Windows10/11, python3.11, pytorch2.5.1, CUDA12.4
 
-Notes, `pupil-apriltags` installation will be failed in python3.12.
+Notes, `pupil-apriltags` installation will be failed in python3.12. If you don't want to use our data capture method, you could choose python>=3.12.
 
 ## 2. Pretrained MaterialGAN model
 
-Download all the checkpoints to the folder `ckp`:
-[`materialgan.pth`](https://www.dropbox.com/scl/fi/z41e6tedyh7m57vatse7p/materialgan.pth?rlkey=ykovb3owafmz6icvss13sdddl&dl=0)
-[`latent_avg_W+_256.pt`](https://www.dropbox.com/scl/fi/nf4kfoiqx6h7baxpbfu01/latent_avg_W-_256.pt?rlkey=ot0yfkbgq47vt45huh65mgwit&st=bjs7tsw1&dl=0)
-[`latent_const_W+_256.pt`](https://www.dropbox.com/scl/fi/mdh8boshpfc6lwktrfh4i/latent_const_W-_256.pt?rlkey=gy55tp5h6c91icxhdzzbf5sss&st=hzxk2580&dl=0)
-[`latent_const_N_256.pt`](https://www.dropbox.com/scl/fi/320aov4ahc4wkhaq8mpve/latent_const_N_256.pt?rlkey=ckydqxdpyvzy7kns2h0geuh4e&st=d7ytmxz5&dl=0)
+The model weights will be automatically downloaded to the folder `ckp` when you run the scripts.
 
-## 3. Usage
 
-Quick try: `python run.py`
+## 3.Quick try
+
+`python run.py`
+
+We provide a captured image set (`data/yellow_box-17.0-0.1/raw/*.jpg`), and corresponding JSON files. 
+The generated results will be in the folder `data/yellow_box-17.0-0.1/optim_latent/1024/`, including generated SVBRDF maps (`nom.png `, `dif.png`, `spe.png`, `rgh.png`), re-rendered target images (`0*.png`) and relighting video in an environment map (`vid.gif`).
+
+## 4. Usage
 
 To optimize SVBRDF maps, we need several images with different lighting and a corresponding JSON file, which has all the information included.
 If you use our dataset, all the JSON files are provided. If you want to capture new data, see below instruction. The JSON file will be generated automatically.

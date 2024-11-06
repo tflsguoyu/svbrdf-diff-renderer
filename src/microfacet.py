@@ -78,6 +78,9 @@ class Microfacet:
 
         return normal, diffuse, specular, roughness
 
+    def update_light(self, light_pow):
+        self.light_pow = light_pow.unsqueeze(0).unsqueeze(2).unsqueeze(3).expand(self.n_of_imgs, -1, self.res, self.res)
+
     def eval(self, textures):
         assert(textures.shape[2] == textures.shape[3])
         assert(self.res == textures.shape[2])

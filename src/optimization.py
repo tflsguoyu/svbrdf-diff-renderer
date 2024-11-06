@@ -28,7 +28,7 @@ class Optim:
     def compute_image_loss(self, predicts):
         return self.loss_l2(predicts, self.targets)
 
-    def optim(self, epochs, lr, svbrdf_obj):
+    def optim(self, epochs, lr, svbrdf_obj, optim_light):
         raise NotImplementedError('Should be implemented in derived class!')
 
     def save_loss(self, losses, labels, save_dir, N):

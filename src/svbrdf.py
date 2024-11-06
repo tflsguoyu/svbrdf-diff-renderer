@@ -41,23 +41,29 @@ class SvbrdfOptim(Optim):
     def load_targets(self, targets):
         self.targets = targets
 
-    def optim(self, epochs, lr, svbrdf_obj):
+    def optim(self, epochs, lr, svbrdf_obj, optim_light):
         tmp_dir = svbrdf_obj.optimize_dir / "tmp" / str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
         tmp_dir.mkdir(parents=True, exist_ok=True)
 
-        self.optimizer = th.optim.Adam([self.textures], lr=lr, betas=(0.9, 0.999))
+        if optim_light:
+            svbrdf_obj.cl[2] = self.gradient(svbrdf_obj.cl[2])
+            self.optimizer = th.optim.Adam([self.textures] + [svbrdf_obj.cl[2]], lr=lr, betas=(0.9, 0.999))
+        else:
+            self.optimizer = th.optim.Adam([self.textures], lr=lr, betas=(0.9, 0.999))
 
         loss_image_list = []
         pbar = tqdm.trange(epochs)
         for epoch in pbar:
             # compute renderings
+            if optim_light:
+                self.renderer_obj.update_light(svbrdf_obj.cl[2])
             rendereds = self.renderer_obj.eval(self.textures.clamp(-1, 1))
 
             # compute loss
             loss = self.compute_image_loss(rendereds)
             loss_image_list.append(loss.item())
 
-            pbar.set_postfix({"Loss": loss.item()})
+            pbar.set_postfix({"Loss": loss.item(), "Light": [int(svbrdf_obj.cl[2][0].item()), int(svbrdf_obj.cl[2][1].item()), int(svbrdf_obj.cl[2][2].item())]})
 
             # optimize
             self.optimizer.zero_grad()
