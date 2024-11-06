@@ -489,6 +489,11 @@ If you find this work useful for your research, please cite:
 }
 ```
 
+# Known issues
+
+- If generated Albedo map is too bright (overexposure), which means the light intensity (fixed value) used here is too small. Please go to JSON files and change `light_pow` accordingly, for example, change it to `10000`. Default value `1500` is an estimation of the flashlight on smartphones.   
+
+
 # Contacts
 
 Welcome to report bugs and leave comments (Yu Guo: tflsguoyu@gmail.com)
