@@ -37,7 +37,7 @@ The model weights will be automatically downloaded to the folder `ckp` when you 
 
 `python run.py`
 
-We provide a captured image set (`data/yellow_box-17.0-0.1/raw/*.jpg`), and corresponding JSON files. 
+We provide a captured image set (`data/yellow_box-17.0-0.1/raw/*.jpg`), and the corresponding JSON files will be generated automatically. 
 The generated results will be in the folder `data/yellow_box-17.0-0.1/optim_latent/1024/`, including generated SVBRDF maps (`nom.png `, `dif.png`, `spe.png`, `rgh.png`), re-rendered target images (`0*.png`) and relighting video in an environment map (`vid.gif`).
 
 ## 4. Usage
