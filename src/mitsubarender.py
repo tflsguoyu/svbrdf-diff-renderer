@@ -14,7 +14,7 @@ class MitsubaRender:
 
     def render(self, angle, light_intensity=1.0):
         self.scene['shape']['to_world'] = \
-            T.translate([0, 0, 0]).rotate([0, 1, 0], angle).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3])
+            T().translate([0, 0, 0]).rotate([0, 1, 0], angle).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3])
         self.scene['emitter']['scale'] = light_intensity
         return np.array(mi.render(mi.load_dict(self.scene))).clip(0, 1) ** (1 / 2.2)
 
@@ -33,9 +33,9 @@ class MitsubaRender:
             'sensor': {
                 'type': 'perspective',
                 'fov': 50,
-                'to_world': T.look_at(
-                    target=[0, 0, 0],
+                'to_world': T().look_at(
                     origin=[0, 0, 1],
+                    target=[0, 0, 0],
                     up=[0, 1, 0]
                 ),
                 'sampler': {
@@ -54,13 +54,13 @@ class MitsubaRender:
             },
             'shape': {
                 'type': 'rectangle',
-                'to_world': T.translate([0, 0, 0]).rotate([0, 1, 0], 0).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3]),
+                'to_world': T().translate([0, 0, 0]).rotate([0, 1, 0], 0).rotate([1, 0, 0], -15).rotate([0, 0, 1], -5).scale([0.3, 0.3, 0.3]),
                 'bsdf': {
                     'type': 'normalmap',
                     'normalmap': {
                         'type': 'bitmap',
                         'filename': 'nom.png',
-                        'to_uv': T.scale([1, -1, 1]),
+                        'to_uv': T().scale([1, -1, 1]),
                         'raw': True
                     },
                     'bsdf': {
@@ -72,13 +72,13 @@ class MitsubaRender:
                             'alpha': {
                                 'type': 'bitmap',
                                 'filename': 'rgh.png',
-                                'to_uv': T.scale([1, -1, 1]),
+                                'to_uv': T().scale([1, -1, 1]),
                                 'raw': False
                             },
                             'specular_reflectance': {
                                 'type': 'bitmap',
                                 'filename': 'spe.png',
-                                'to_uv': T.scale([1, -1, 1]),
+                                'to_uv': T().scale([1, -1, 1]),
                                 'raw': False
                             }
                         },
@@ -87,7 +87,7 @@ class MitsubaRender:
                             'reflectance': {
                                 'type': 'bitmap',
                                 'filename': 'dif.png',
-                                'to_uv': T.scale([1, -1, 1]),
+                                'to_uv': T().scale([1, -1, 1]),
                                 'raw': False
                             }
                         }
@@ -98,7 +98,7 @@ class MitsubaRender:
                 'type': 'envmap',
                 'filename': 'ennis.exr',
                 'scale': 1,
-                'to_world': T.rotate([0, 1, 0], 0)
+                'to_world': T().rotate([0, 1, 0], 0)
             }
         }
 
