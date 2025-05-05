@@ -24,8 +24,8 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 - [`matplotlib`(3.10.1)](https://pypi.org/project/matplotlib/)
 - [`tqdm`(4.67.1)](https://pypi.org/project/tqdm/)
 - [`requests`(2.32.3)](https://pypi.org/project/requests/)
-- [`pupil-apriltags`(1.0.4.post11)](https://pypi.org/project/pupil-apriltags/)(for data capture)
-- [`mitsuba`(3.6.4)](https://pypi.org/project/mitsuba/)(for envmap rendering)
+- [`pupil-apriltags`(1.0.4.post11)](https://pypi.org/project/pupil-apriltags/) (for data capture)
+- [`mitsuba`(3.6.4)](https://pypi.org/project/mitsuba/) (for envmap rendering)
 
 ## 2. Pretrained MaterialGAN model
 
