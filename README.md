@@ -17,7 +17,7 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 
 # Quick start
 
-## 1. Python dependencies
+## 1. Python dependencies (Tested on Windows 10, conda env with python=3.13)
 
 - [`torch`(2.7.0+cu128), `torchvision`(0.22.0+cu128)](https://pytorch.org/)
 - [`opencv-python`(4.11.0.86)](https://pypi.org/project/opencv-python/)
