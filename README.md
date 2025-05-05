@@ -17,16 +17,15 @@ In ACM Transactions on Graphics (SIGGRAPH Asia 2020).
 
 # Quick start
 
-## 1. Python dependencies (prefer to use `pip install`)
+## 1. Python dependencies
 
-`torch`, `torchvision`, `opencv-python`, `matplotlib`, `tqdm`, `pupil-apriltags`(for data capture), `mitsuba`(for envmap rendering)
-
-Tested on,
-
-1. MacOS, python3.11, pytorch2.5.1, CPU
-2. Windows10/11, python3.11, pytorch2.5.1, CUDA12.4
-
-Notes, `pupil-apriltags` installation will be failed in python3.12. If you don't want to use our data capture method, you could skip this and choose python>=3.12.
+- [`torch`(2.7.0+cu128), `torchvision`(0.22.0+cu128)](https://pytorch.org/)
+- [`opencv-python`(4.11.0.86)](https://pypi.org/project/opencv-python/)
+- [`matplotlib`(3.10.1)](https://pypi.org/project/matplotlib/)
+- [`tqdm`(4.67.1)](https://pypi.org/project/tqdm/)
+- [`requests`(2.32.3)](https://pypi.org/project/requests/)
+- [`pupil-apriltags`(1.0.4.post11)](https://pypi.org/project/pupil-apriltags/)(for data capture)
+- [`mitsuba`(3.6.4)](https://pypi.org/project/mitsuba/)(for envmap rendering)
 
 ## 2. Pretrained MaterialGAN model
 
